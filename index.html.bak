@@ -26,11 +26,11 @@ Please understand that I need a revenue to support my family, and because all my
 
 <p>- Passive ads :<br>
 (Passive ads are non voluntary ads that appear whilst the player is playing)<br>
-- Interstitials</p>
+. Interstitials</p>
 <p>- Rewarded ads :<br>
 (Rewarded ads are used to reward the player in exchange for them voluntarily watching a specific rewarded ad)<br>
-- Rewarded interstitials<br>
-- Rewarded videos</p>
+. Rewarded interstitials<br>
+. Rewarded videos</p>
 
 <h4>Data Collection</h4>
 <p>Simply Shaped Games does not directly collect any data from its players, nor does it use any personal data it could acquire from its ad provider (Admob).<br>
@@ -90,8 +90,7 @@ For more details, please click on this link : https://unity3d.com/legal/privacy-
 (Required for the secret custom skin to function (unlocked at the very end of the game), allowing the player to set the appearance of his character to any single picture hat he wants (that he needs to choose from his local storage, within the game itself))</p>
 
 <h4>Data Collection</h4>
-<p>Data Collection<br>
-On Player Death ; On Level Completed ; On Skin Unlocked ; etc...<br>
-(Simply to know if I should adjust a certain part of one of my games (difficulty, duration, etc...))</p>
+<p>Simply Shaped Games does not collect any unwilling personal data whatsoever from its players via in-game authorizations.<br>
+I simply require those in-game authorizations to add fun or original gameplay features.</p>
 </body>
 </html>
