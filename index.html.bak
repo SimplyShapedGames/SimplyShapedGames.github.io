@@ -8,7 +8,7 @@
 
 <h2>Privacy Policy</h2>
 <p>This is Simply Shaped Games' privacy policy for all of its published games, if you are interested in how I use your data throughout my games, please read carefully.<br>
-If you have any questions, don't hesitate to contact me!</p>
+If you have any questions, don't hesitate to contact me at : stormeckhart.games@gmail.com!</p>
 
 <h3>Advertisement</h3>
 <p>This paragraph explains in detail all advertisement related matters within Simply Shaped Games' games :</p>
@@ -86,7 +86,7 @@ For more details, please click on this link : https://unity3d.com/legal/privacy-
 <h4>What type?</h4>
 <p>Here are each of Simply Shaped Games' games in-game authorizations required and asked :<br>
 - Slide<br>
-- READ_PHONE_STATE<br>
+. READ_PHONE_STATE<br>
 (Required for the secret custom skin to function (unlocked at the very end of the game), allowing the player to set the appearance of his character to any single picture hat he wants (that he needs to choose from his local storage, within the game itself))</p>
 
 <h4>Data Collection</h4>
