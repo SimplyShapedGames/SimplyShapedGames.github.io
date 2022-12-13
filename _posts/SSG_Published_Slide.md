@@ -1,7 +1,7 @@
 ---
 layout: post
-title: New game published : "Slide"
-subtitle: SSG has published its very first game!
+title: New game published (Slide)
+subtitle: SSG has published its very first game
 cover-img: /assets/img/GamePanel_Slide.png
 thumbnail-img: /assets/img/GameLogo_Slide.png
 share-img: /assets/img/GameLogo_Slide.png
