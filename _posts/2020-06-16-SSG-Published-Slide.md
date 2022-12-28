@@ -1,6 +1,6 @@
 ---
 layout: post
-title: New game published (Slide)
+title: New game published : Slide
 subtitle: SSG has published its very first game
 cover-img: /assets/img/GamePanel_Slide.png
 thumbnail-img: /assets/img/GameLogo_Slide.png
@@ -9,7 +9,7 @@ tags: [indiegame, publishing]
 ---
 
 **SimplyShapedGames has published its very first game** : "_Slide - Simple Yet Fun_"
-The game is a 2D hypercasual arcade game made with Unity and deployed onto Android and IOS.
+The game is a 2D hypercasual arcade game made with Unity and deployed onto **Android and IOS**.
 
 If you wish to know more about the game, **don't hesitate to check the links below**!
 
