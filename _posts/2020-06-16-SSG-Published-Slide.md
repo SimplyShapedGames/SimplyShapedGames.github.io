@@ -8,23 +8,23 @@ share-img: /assets/img/GameLogo_Slide.png
 tags: [indiegame, publishing]
 ---
 
-**SimplyShapedGames has published its very first game** : "Slide - Simple Yet Fun"!
+**SimplyShapedGames has published its very first game** : "_Slide - Simple Yet Fun_"!
 The game is a 2D hypercasual arcade game made with Unity and deployed onto Android and IOS.
 
 If you wish to know more about the game, **don't hesitate to check the links below** :
 
-Its portfolio page:
+**Its portfolio page** : 
 https://stormeckhart.wixsite.com/portfolio/101
 
-Its video showcase:
+**Its video showcase** :
 https://youtu.be/82uG_a-lIes
 
-The store links (to try out the game yourself):
-PlayStore :
+**The store links** (_to try out the game yourself_):
+**PlayStore** :
 https://play.google.com/store/apps/deails?id=com.SimplyShapedGames.Slide
 
-AppStore : 
-https://apps.apple.com/fr/app/slide-simple-yet-fun/id1632217353
+**AppStore** : 
+<u>https://apps.apple.com/fr/app/slide-simple-yet-fun/id1632217353</u>
 
 Thanks for reading,
 Have a great day!
