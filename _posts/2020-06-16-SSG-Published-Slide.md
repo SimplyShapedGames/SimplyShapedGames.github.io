@@ -21,7 +21,7 @@ The store links (_to try out the game yourself_) :
 
 [**PlayStore**](https://play.google.com/store/apps/deails?id=com.SimplyShapedGames.Slide)
 
-[**AppStore**]{(https://apps.apple.com/fr/app/slide-simple-yet-fun/id1632217353)
+[**AppStore**](https://apps.apple.com/fr/app/slide-simple-yet-fun/id1632217353)
 
 Thanks for reading,
 Have a great day!
