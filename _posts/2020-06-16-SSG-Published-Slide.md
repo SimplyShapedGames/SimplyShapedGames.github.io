@@ -24,7 +24,7 @@ https://youtu.be/82uG_a-lIes
 https://play.google.com/store/apps/deails?id=com.SimplyShapedGames.Slide
 
 **AppStore** : 
-<u>https://apps.apple.com/fr/app/slide-simple-yet-fun/id1632217353</u>
+https://apps.apple.com/fr/app/slide-simple-yet-fun/id1632217353
 
 Thanks for reading,
 Have a great day!
