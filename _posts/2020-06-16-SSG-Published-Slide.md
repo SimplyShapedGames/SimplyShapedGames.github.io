@@ -8,10 +8,10 @@ share-img: /assets/img/GameLogo_Slide.png
 tags: [indiegame, publishing]
 ---
 
-SimplyShapedGames has published its very first game: "Slide - Simple Yet Fun"!
-"Slide" is a 2D hypercasual arcade game made with Unity and deployed onto Android and IOS.
+**SimplyShapedGames has published its very first game** : "Slide - Simple Yet Fun"!
+The game is a 2D hypercasual arcade game made with Unity and deployed onto Android and IOS.
 
-If you wish to know more about the game, don't hesitate to check the links below;
+If you wish to know more about the game, **don't hesitate to check the links below** :
 
 Its portfolio page:
 https://stormeckhart.wixsite.com/portfolio/101
