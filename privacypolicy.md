@@ -25,9 +25,6 @@ The app does use third-party services that may collect information used to ident
 Link to the privacy policy of third-party service providers used by the app:
 
 - [Unity Technologies](https://unity.com/legal/privacy-policy) (Unity Analytics, Unity IAP, Unity LevelPlay)
-- [Facebook](https://facebook.com/about/privacy)
-- [GameAnalytics](https://gameanalytics.com/privacy)
-- [Adjust](https://www.adjust.com/terms/privacy-policy/)
 
 ### Log Data
 
@@ -76,9 +73,6 @@ Simply Shaped Games and its third-party partners collect data:
 **The third-party partners that Simply Shaped Games will share the data with are:**
 
 - Unity Technologies
-- GameAnalytics
-- Facebook Analytics
-- Adjust
 
 **Data deletion requests**
 
@@ -88,18 +82,6 @@ If you also want to request the deletion of the data that may have been collecte
 
 **Unity Technologies:**
 - privacy policy: [https://unity.com/legal/privacy-policy](https://unity.com/legal/privacy-policy)
-
-**GameAnalytics:**
-- email: privacy@gameanalytics.com
-- privacy policy: [https://gameanalytics.com/privacy/#6-changing-or-deleting-your-information](https://gameanalytics.com/privacy/#6-changing-or-deleting-your-information)
-
-**Facebook Analytics:**
-- email: none, please refer to the privacy policy
-- privacy policy: [https://www.facebook.com/policy.php](https://www.facebook.com/policy.php)
-
-**Adjust:**
-- email: privacy@adjust.com
-- privacy policy: [https://www.adjust.com/terms/privacy-policy/](https://www.adjust.com/terms/privacy-policy/)
 
 ### Contact Us
 
