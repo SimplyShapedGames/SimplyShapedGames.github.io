@@ -11,6 +11,8 @@
 
 # Name of website
 title: Homepage
+url: "https://simplyshapedgames.fr"
+baseurl: ""
 
 # Your name to show in the footer
 author: Storm Eckhart
@@ -20,8 +22,8 @@ author: Storm Eckhart
 ###############################################
 
 navbar-links:
-  About SimplyShapedGames: "aboutme"
-  Privacy Policy: "privacypolicy"
+  About SimplyShapedGames: "aboutme/"
+  Privacy Policy: "privacypolicy/"
 
 ################
 # --- Logo --- #
