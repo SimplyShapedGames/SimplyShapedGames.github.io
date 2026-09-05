@@ -1,0 +1,8 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Catalogue from '../components/Catalogue.astro';
+import { categories } from '../lib/catalogue';
+export function getStaticPaths() { return categories.filter(c => c.id !== 'all').map(category => ({ params: { category: category.id }, props: { category } })); }
+const { category } = Astro.props;
+---
+<SiteLayout title={category.title}><Catalogue category={category.id} /></SiteLayout>

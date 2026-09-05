@@ -1,0 +1,28 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { allProjects, allPosts, categoryLabels, postUrl } from '../lib/catalogue';
+const entries = [
+  ...(await allProjects()).map(p => ({ title:p.data.title, summary:p.data.summary, kind:categoryLabels[p.data.category], url:`/projects/${p.id}/`, keywords:[p.data.status,...p.data.platforms,...p.data.technologies].join(' ') })),
+  ...(await allPosts()).map(p => ({ title:p.data.title, summary:p.data.subtitle || '', kind:'Journal', url:postUrl(p.id), keywords:p.data.tags.join(' ') })),
+];
+---
+<SiteLayout title="Search" active="search"><div class="page-shell search-page"><header class="page-heading"><p class="eyebrow">Find something</p><h1>Search<span class="blue-text">.</span></h1></header><form class="search-form" action="/search/" role="search" hidden><label for="site-search">Search creations and journal posts</label><div class="search-input-wrap"><input id="site-search" type="search" name="q" placeholder="Try Minecraft, Android, or a project name…" autocomplete="off"/><button class="button-link" type="submit">Search ↗</button></div></form><noscript><p>Search needs JavaScript. You can browse every entry below instead.</p></noscript><p class="search-count" role="status" aria-live="polite">{entries.length} entries</p><div class="search-results">{entries.map(entry => <article class="search-result" data-search={`${entry.title} ${entry.summary} ${entry.kind} ${entry.keywords}`.toLowerCase()}><a href={entry.url}><span class="eyebrow">{entry.kind}</span><h2>{entry.title} <span aria-hidden="true">↗</span></h2><p>{entry.summary}</p></a></article>)}</div><p class="search-empty" hidden>No matches yet. Try a shorter search or <a class="text-link" href="/">browse the collection</a>.</p></div></SiteLayout>
+<script>
+  const form = document.querySelector<HTMLFormElement>('.search-form')!;
+  const input = document.querySelector<HTMLInputElement>('#site-search')!;
+  const entries = [...document.querySelectorAll<HTMLElement>('[data-search]')];
+  const count = document.querySelector<HTMLElement>('.search-count')!;
+  const empty = document.querySelector<HTMLElement>('.search-empty')!;
+  form.hidden = false;
+  const filter = () => {
+    const words = input.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    let matches = 0;
+    entries.forEach(entry => { entry.hidden = !words.every(word => entry.dataset.search!.includes(word)); if (!entry.hidden) matches++; });
+    count.textContent = `${matches} ${matches === 1 ? 'result' : 'results'}`;
+    empty.hidden = matches > 0;
+  };
+  input.value = new URLSearchParams(location.search).get('q') || '';
+  filter();
+  input.addEventListener('input', filter);
+  form.addEventListener('submit', event => { event.preventDefault(); filter(); const url = new URL(location.href); input.value.trim() ? url.searchParams.set('q',input.value.trim()) : url.searchParams.delete('q'); history.replaceState(null, '', url); });
+</script>

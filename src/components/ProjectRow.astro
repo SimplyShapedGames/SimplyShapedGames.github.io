@@ -1,0 +1,17 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { projectArtwork } from '../lib/art';
+interface Props { project: CollectionEntry<'projects'>; }
+const { project: { data, id } } = Astro.props;
+const art = projectArtwork(data, 1);
+const marks = { games: '◒', mods: '◧', websites: '⌘', design: '◐' };
+---
+<a class:list={['project-row', `row-${data.category}`]} href={`/projects/${id}/`}>
+  <span class:list={['row-icon', data.category === 'mods' ? 'blue' : 'coral']}>
+    {art ? <Image src={art} alt="" width={88} height={88} fit="contain" format="webp" loading="lazy" /> : <span aria-hidden="true">{marks[data.category]}</span>}
+  </span>
+  <span class="row-name">{data.title}<small><span class:list={['status-dot', { 'is-development': data.status === 'In development' }]}></span>{data.status}{data.platforms.length ? ` · ${data.platforms.join(' / ')}` : ''}</small></span>
+  <span class:list={['geometric-ribbon', { 'ribbon-web': data.category === 'websites', 'ribbon-dev': data.status === 'In development' }]} aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+  <span class="row-arrow" aria-hidden="true">↗</span>
+</a>

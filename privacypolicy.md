@@ -6,9 +6,9 @@ subtitle: SimplyShapedGames Privacy Policy
 
 ## Privacy Policy
 
-*Last updated: April 18, 2026*
+*Last updated: September 5, 2026*
 
-This privacy policy applies to all games published by Simply Shaped Games, including: **Slide**, **ShapeDash**, **PiecePerfect**, and **BoulderRoll**.
+This privacy policy applies to all games published by Simply Shaped Games, including **Slide**, **ShapeDash**, and **PiecePerfect**.
 
 This Service is provided by Simply Shaped Games at no cost and is intended for use as is.
 

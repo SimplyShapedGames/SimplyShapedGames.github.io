@@ -1,21 +1,20 @@
 ---
 layout: post
-title: Another game published (ShapeDash)
-subtitle: SSG has published a new game
+title: Change shape, keep moving in ShapeDash
+subtitle: A 3D arcade runner where the next opening decides your next form.
 cover-img: /assets/img/GameLogo_ShapeDash.png
 thumbnail-img: /assets/img/GameLogo_ShapeDash.png
 share-img: /assets/img/GameLogo_ShapeDash.png
 tags: [indiegame, publishing]
+related_projects: [shapedash]
 ---
 
-**SimplyShapedGames has published another game**: "_ShapeDash_"
+The opening ahead is coming closer. You're in the right lane—but are you the right shape?
 
-ShapeDash is a colorful 3D arcade runner made with Unity and deployed onto **Android**. Dash along shifting lanes, switch between shapes, and find the right form to pass each obstacle.
+**ShapeDash** brings those two decisions together in a colourful 3D arcade runner. Move between lanes, change form and line yourself up with the obstacle ahead. Finding the route matters, but so does being able to fit through it.
 
-If you wish to know more about the game, **don't hesitate to check the link below**!
+This is a change of pace from PiecePerfect's untimed boards. Here, reading the course and making your choice happen while you're moving. The familiar SimplyShapedGames shapes become something you switch between as part of the run.
 
-The store link (_to try out the game yourself_):
-[**PlayStore**](https://play.google.com/store/apps/details?id=com.SimplyShapedGames.ShapeDash)
+Built in Unity, ShapeDash is my third published mobile game and is available on **Android**.
 
-Thanks for reading,
-Have a great day!
+[Try ShapeDash on Google Play](https://play.google.com/store/apps/details?id=com.SimplyShapedGames.ShapeDash), or [take a look at its project page](/projects/shapedash/).

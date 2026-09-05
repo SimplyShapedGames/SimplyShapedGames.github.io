@@ -1,0 +1,7 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { allPosts, postUrl, postDate, formatDate } from '../lib/catalogue';
+const posts = await allPosts();
+const tags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
+---
+<SiteLayout title="Journal tags" active="journal"><div class="page-shell"><a href="/journal/" class="back-link">← Back to the journal</a><header class="page-heading"><p class="eyebrow">Browse the journal</p><h1>Tags<span class="blue-text">.</span></h1></header>{tags.map(tag => <section class="tag-group" id={tag}><h2>#{tag}</h2>{posts.filter(p=>p.data.tags.includes(tag)).map(post => <a class="journal-line" href={postUrl(post.id)}><time datetime={postDate(post.id).toISOString()}>{formatDate(postDate(post.id))}</time><span>{post.data.title}</span><span aria-hidden="true">↗</span></a>)}</section>)}</div></SiteLayout>

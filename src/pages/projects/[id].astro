@@ -1,0 +1,34 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import ProjectRow from '../../components/ProjectRow.astro';
+import { allProjects, categoryLabels, allPosts, postUrl, postDate, formatDate } from '../../lib/catalogue';
+import { artwork } from '../../lib/art';
+export async function getStaticPaths() { return (await allProjects()).map(project => ({ params: { id: project.id }, props: { project } })); }
+const { project } = Astro.props;
+const { data, id } = project;
+const { Content } = await render(project);
+const art = data.cover ? artwork[data.cover] : undefined;
+const related = (await allProjects()).filter(p => data.related.includes(p.id));
+const posts = (await allPosts()).filter(p => p.data.related_projects.includes(id));
+const gallery = await Promise.all(data.gallery.map(async item => {
+  const image = artwork[item.image];
+  if (!image) throw new Error(`Unknown gallery image '${item.image}' in project '${id}'`);
+  return { ...item, image, large: await getImage({ src: image, width: Math.min(image.width, 2000), format: 'webp' }) };
+}));
+---
+<SiteLayout title={data.title} description={data.summary}>
+  <article class="project-page page-shell">
+    <a class="back-link" href={`/${data.category}/`}>← All {data.category}</a>
+    <header class="project-heading">
+      <div><p class="eyebrow">{categoryLabels[data.category]} <span class="label-separator">/</span> <span class:list={['status-dot', { 'is-development': data.status === 'In development' }]}></span>{data.status}</p><h1>{data.title}<span class="blue-text">.</span></h1></div>
+      <div class="project-introduction"><p>{data.summary}</p>{data.links.length > 0 ? <div class="project-actions">{data.links.map((link, i) => <a class:list={['button-link', { secondary: i > 0 }]} href={link.url}>{link.label}<span aria-hidden="true">↗</span></a>)}</div> : data.status === 'In development' && <p class="development-note">{['games', 'mods'].includes(data.category) ? 'In development. Download details will be added when available.' : 'The redesign is currently in development.'}</p>}</div>
+    </header>
+    {art ? <figure class:list={['project-figure', `figure-${id}`]}><Image src={art} alt={data.imageNote ? `${data.title} — ${data.imageNote}` : `${data.title} artwork`} widths={[640, 1000, 1600]} sizes="(max-width: 800px) 90vw, 88vw" format="webp" loading="eager" /><figcaption>{data.imageNote || `${data.title} · Project artwork`}</figcaption></figure> : <div class:list={['typographic-cover', `cover-${id}`]} aria-hidden="true"><span class="cover-kicker">{id === 'gymboree-geneva' ? 'Website care & development' : 'Games. Mods. Web.'}</span><span class="cover-title">{id === 'gymboree-geneva' ? <>Gymboree<br/>Geneva<span>↗</span></> : <>Simply<br/>Shaped<br/>Games<span>●</span></>}</span><div class="cover-geometry"><i></i><i></i><i></i></div></div>}
+    <div class="project-body"><aside class="project-facts" aria-label="Project details"><dl><div><dt>Work</dt><dd>{data.role}</dd></div>{data.platforms.length > 0 && <div><dt>Platform</dt><dd>{data.platforms.join(' · ')}</dd></div>}<div><dt>Made with</dt><dd>{data.technologies.join(' · ')}</dd></div><div><dt>Status</dt><dd>{data.status}</dd></div></dl></aside><div class="prose"><Content /></div></div>
+    {gallery.length > 0 && <section class="project-gallery" aria-labelledby="gallery-title"><div class="section-heading"><h2 id="gallery-title">A closer look<span>.</span></h2><p class="gallery-hint">Select an image to see it larger.</p></div><div class="gallery-grid">{gallery.map(item => <figure class:list={['gallery-item', { 'gallery-portrait': item.image.height > item.image.width }]}><a href={item.large.src} aria-label={`View larger image: ${item.alt}`}><Image src={item.image} alt={item.alt} widths={[400, 700, 1100]} sizes="(max-width: 560px) 90vw, 45vw" format="webp" loading="lazy" /><span aria-hidden="true">↗</span></a><figcaption>{item.caption}</figcaption></figure>)}</div></section>}
+    {posts.length > 0 && <section class="project-journal"><h2>From the journal</h2>{posts.map(post => <a class="journal-line" href={postUrl(post.id)}><time datetime={postDate(post.id).toISOString()}>{formatDate(postDate(post.id))}</time><span>{post.data.title}</span><span aria-hidden="true">↗</span></a>)}</section>}
+    {related.length > 0 && <section class="related-projects"><div class="section-heading"><h2>Keep exploring<span>.</span></h2><a class="text-link" href="/">All creations ↗</a></div>{related.map(p => <ProjectRow project={p} />)}</section>}
+  </article>
+</SiteLayout>

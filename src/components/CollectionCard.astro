@@ -1,0 +1,17 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { artwork } from '../lib/art';
+interface Props { project: CollectionEntry<'projects'>; }
+const { project: { data, id } } = Astro.props;
+const art = data.cover ? artwork[data.cover] : undefined;
+---
+<article class:list={['collection-card', `collection-${id}`]}>
+  <a href={`/projects/${id}/`}>
+    <div class="collection-art">
+      {art ? <Image src={art} alt={data.imageNote ? `${data.title} — ${data.imageNote}` : `${data.title} artwork`} widths={[400, 700, 1000]} sizes="(max-width: 560px) 90vw, (max-width: 1200px) 45vw, 30vw" format="webp" loading="lazy" /> : <div class="collection-type" aria-hidden="true"><span>{data.title}</span><span class="tiny-shapes"><i></i><i></i><i></i></span></div>}
+      <span class="collection-open" aria-hidden="true">↗</span>
+    </div>
+    <div class="collection-caption"><p class="collection-status"><span class:list={['status-dot', { 'is-development': data.status === 'In development' }]}></span>{data.status}{data.platforms.length ? ` · ${data.platforms.join(' / ')}` : ''}</p><h3>{data.title}</h3><p>{data.summary}</p></div>
+  </a>
+</article>

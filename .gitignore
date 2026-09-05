@@ -11,3 +11,14 @@ ehthumbs.db
 Gemfile.lock
 
 beautiful-jekyll-theme-*.gem
+
+# Astro portfolio
+node_modules/
+dist/
+.astro/
+.pnpm-store/
+validation/
+.private/
+public/assets/img/
+public/app-ads.txt
+public/CNAME

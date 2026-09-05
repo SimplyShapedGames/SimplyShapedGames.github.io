@@ -1,0 +1,22 @@
+/* Square game icons stay intact, with the caption outside their artwork. */
+.project-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.project-card,.project-card-lead{grid-column:auto;min-height:0;background:var(--paper);color:var(--ink);overflow:visible;box-shadow:none;border-radius:0}
+.game-icon-frame{display:block;position:relative;aspect-ratio:1;overflow:hidden;border-radius:15px;background:#111;border:1px solid var(--line)}
+.project-card .project-art,.project-card:nth-child(2) .project-art,.project-card:nth-child(3) .project-art,.project-card-lead .project-art{position:static;width:100%;height:100%;object-fit:contain;object-position:center}
+.project-card .card-topline{display:none}
+.project-card .card-caption,.project-card-lead .card-caption{position:static;min-width:0;padding:.85rem .05rem 0;border-radius:0;background:transparent}
+.project-card .card-caption strong{font-size:clamp(1.1rem,1.6vw,1.6rem)}
+.project-card .card-caption>span{font-size:.875rem}
+.journal-image{aspect-ratio:1}
+.journal-image img{object-fit:contain}
+.row-icon img{object-fit:contain}
+.project-row[href="/projects/geneva-window-sticker/"] .row-icon{background:var(--yellow)}
+.collection-art>img{object-fit:contain}
+.collection-art{background:var(--surface)}
+.website-preview img{object-position:top center}
+/* A transparent cutout lets the same surface token colour all the image panels. */
+.about-art.about-collage{min-height:0;aspect-ratio:1122/1402;padding:0;background:var(--surface);container-type:inline-size}
+.about-collage>img{width:100%;height:100%;object-fit:cover}
+.about-art.about-collage>span{left:7%;bottom:6%;font-size:clamp(1.7rem,9.5cqw,3.6rem);color:var(--ink);line-height:1.12;text-shadow:none}
+@media(max-width:1200px) and (min-width:801px){.project-grid{gap:.8rem}.project-card .card-caption strong{font-size:1.1rem}.project-card .card-caption>span{font-size:.8rem}}
+@media(max-width:560px){.project-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem 1rem}.project-card-lead{grid-column:auto}.project-card .card-caption strong{font-size:1.4rem}.journal-image{aspect-ratio:1}}

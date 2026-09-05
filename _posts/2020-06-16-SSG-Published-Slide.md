@@ -1,26 +1,20 @@
 ---
 layout: post
-title: New game published (Slide)
-subtitle: SSG has published its very first game
+title: Finding a way through with Slide
+subtitle: A swipe, a maze and the first SimplyShapedGames release.
 cover-img: /assets/img/GamePanel_Slide.png
 thumbnail-img: /assets/img/GameLogo_Slide.png
 share-img: /assets/img/GameLogo_Slide.png
 tags: [indiegame, publishing]
+related_projects: [slide]
 ---
 
-**SimplyShapedGames has published its very first game** : "_Slide - Simple Yet Fun_"
-The game is a 2D hypercasual arcade game made with Unity and deployed onto **Android and IOS**.
+A shape, a maze and an exit. **Slide – Simple Yet Fun** is the first game I've released as SimplyShapedGames, and it starts with that small set of ingredients.
 
-If you wish to know more about the game, **don't hesitate to check the links below**!
+You swipe to move through the maze, working out which route will get you to the finish. The uncluttered geometric style puts the walls, the openings and your next move in focus.
 
-[**Its portfolio page**](https://stormeckhart.wixsite.com/portfolio/101)
- / 
-[**Its video showcase**](https://youtu.be/82uG_a-lIes)
+That starting point leaves room for different challenges. Timed levels add pressure, rotating stages change your bearings, and hidden walls make a familiar-looking board harder to read. Unlockable shapes, colours and trails give you a way to make the game your own.
 
-The store links (_to try out the game yourself_) :
-[**PlayStore**](https://play.google.com/store/apps/deails?id=com.SimplyShapedGames.Slide)
- / 
-[**AppStore**](https://apps.apple.com/fr/app/slide-simple-yet-fun/id1632217353)
+For me, this is a first milestone: SimplyShapedGames now has a finished game for people to play.
 
-Thanks for reading,
-Have a great day!
+Slide is available on **Android** through [Google Play](https://play.google.com/store/apps/details?id=com.SimplyShapedGames.Slide_). You can also [watch the showcase](https://youtu.be/82uG_a-lIes) or [explore the project](/projects/slide/).

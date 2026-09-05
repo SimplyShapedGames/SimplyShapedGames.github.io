@@ -1,22 +1,20 @@
 ---
 layout: post
-title: Another game published (PiecePerfect)
-subtitle: SSG has published a new game
+title: 'PiecePerfect: room for one more piece'
+subtitle: Colour-matching puzzles, time to think and a robot companion.
 cover-img: /assets/img/Sprite_GameFeature2.png
 thumbnail-img: /assets/img/Sprite_GameLogo2.png
 share-img: /assets/img/Sprite_GameLogo2.png
 tags: [indiegame, publishing]
+related_projects: [pieceperfect]
 ---
 
-**SimplyShapedGames has published another game** : "_PiecePerfect_"
-The game is a 3D casual match-3 game made with Unity and deployed onto **Android**.
+Finding a space is only part of the puzzle. In **PiecePerfect**, you also need to think about the colours you're putting together.
 
-If you wish to know more about the game, **don't hesitate to check the links below**!
+My second Android game is built around arranging sets of pieces on a grid. You can rotate them before placing them, mix primary colours and work through changing colour patterns. Moves are limited, but there is no timer: you have room to stop and consider the board.
 
-[**Its video showcase**](https://www.youtube.com/shorts/WPpr2qAn16I)
+A reactive robot keeps you company, and a few tools offer other ways to approach a stubborn puzzle. The saw splits pieces, glue joins them, the wand helps with placement and the brush swaps pieces. A board that looks awkward at first can become a different problem once you use the tools available.
 
-The store link (_to try out the game yourself_) :
-[**PlayStore**](https://play.google.com/store/apps/details?id=com.SimplyShapedGames.PiecePerfect)
+After navigating mazes in Slide, this release shifts the focus to the pieces themselves: how they fit, how their colours interact and what you can change before committing to a move.
 
-Thanks for reading,
-Have a great day!
+[Watch PiecePerfect in motion](https://www.youtube.com/shorts/WPpr2qAn16I), [read more about the project](/projects/pieceperfect/) or try it on [Google Play](https://play.google.com/store/apps/details?id=com.SimplyShapedGames.PiecePerfect).

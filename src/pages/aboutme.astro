@@ -1,0 +1,18 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { Image } from 'astro:assets';
+import collage from '../assets/projects/about-collage-transparent.png';
+const collageDescription = "A geometric collage inspired by SimplyShapedGames' released games, mods and completed Geneva design work";
+---
+<SiteLayout title="About" active="about" description="Meet Storm Eckhart, the independent developer behind SimplyShapedGames.">
+  <div class="page-shell about-page">
+    <header class="page-heading"><p class="eyebrow">Independent since 2017</p><h1>Hi, I'm Storm<span class="blue-text">.</span></h1><p>The person behind SimplyShapedGames.</p></header>
+    <div class="about-layout">
+      <div class="about-art about-collage">
+        <Image class="collage-artwork" src={collage} alt={collageDescription} widths={[450, 750, 1122]} sizes="(max-width: 560px) 90vw, 40vw" format="webp" loading="eager" />
+        <span>One person.<br/>Many shapes.</span>
+      </div>
+      <div class="prose"><h2>It started with games.</h2><p>I'm Storm Eckhart, the owner and developer behind SimplyShapedGames. I started it in 2017 to give my ideas a home — and to push myself to turn them into finished games.</p><p>Since then, I've published Slide, PiecePerfect and ShapeDash. Along the way, the collection has grown to include game mods, websites and design work.</p><p>This site brings that released and completed work together, with a space for each creation and the details behind it.</p><p><a class="text-link" href="/">Explore the collection ↗</a></p><h2>Something in mind?</h2><p>For questions about a project or a conversation about web work, <a href="/contact/">get in touch</a>.</p></div>
+    </div>
+  </div>
+</SiteLayout>

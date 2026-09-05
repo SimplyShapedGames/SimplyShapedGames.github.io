@@ -1,3 +1,13 @@
+# SimplyShapedGames portfolio
+
+The current website is built with **Astro** for **GitHub Pages**. It showcases games, mods, websites and design work, alongside the existing journal. Use `pnpm dev` for development and `pnpm build` for the checked static output.
+
+See [the website guide](docs/WEBSITE.md) for setup, editing content, validation and the opt-in publication process. Project descriptions are in `src/content/projects/`; posts remain in `_posts/`.
+
+The original theme documentation below is retained as migration reference, not as the setup instructions for the new site.
+
+---
+
 [![](https://i.imgur.com/zNBkzj1.png)](https://beautifuljekyll.com/plans/)
 
 # Beautiful Jekyll

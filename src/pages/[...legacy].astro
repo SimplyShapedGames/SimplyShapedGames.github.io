@@ -1,0 +1,26 @@
+---
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import { journalArtwork } from '../lib/art';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { allPosts, allProjects, postUrl, postDate, formatDate } from '../lib/catalogue';
+import ProjectRow from '../components/ProjectRow.astro';
+export async function getStaticPaths() {
+  return (await allPosts()).flatMap(post => [...new Set([post.id, post.id.toLowerCase()])].map(legacy => ({ params: { legacy }, props: { post } })));
+}
+const { post } = Astro.props;
+const { Content } = await render(post);
+const related = (await allProjects()).filter(p => post.data.related_projects.includes(p.id));
+const shareUrl = encodeURIComponent(new URL(postUrl(post.id), Astro.site).href);
+const shareTitle = encodeURIComponent(post.data.title);
+const image = journalArtwork(post.data, 1.875);
+---
+<SiteLayout title={post.data.title} description={post.data.subtitle} active="journal" image={post.data['share-img']} canonicalPath={postUrl(post.id)} articleDate={postDate(post.id).toISOString()}>
+  <article class="page-shell post-page">
+    <a class="back-link" href="/journal/">← Back to the journal</a>
+    <header class="page-heading"><p class="eyebrow"><time datetime={postDate(post.id).toISOString()}>{formatDate(postDate(post.id))}</time> <span class="label-separator">/</span> Journal</p><h1>{post.data.title}<span class="blue-text">.</span></h1><p>{post.data.subtitle}</p></header>
+    {image && <div class="post-cover"><Image src={image} alt={`${post.data.title} artwork`} widths={[640, 1000, 1600]} sizes="90vw" format="webp" loading="eager" /></div>}
+    <div class="post-body prose"><Content /><div class="post-tags" aria-label="Post tags">{post.data.tags.map(tag => <a href={`/tags/#${encodeURIComponent(tag)}`}>#{tag}</a>)}</div><nav class="post-share" aria-label="Share this post"><span>Share</span><a href={`https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}`}>X / Twitter ↗</a><a href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}>Facebook ↗</a><a href={`https://www.linkedin.com/shareArticle?mini=true&url=${shareUrl}`}>LinkedIn ↗</a></nav></div>
+    {related.length > 0 && <section class="related-projects"><h2>Explore the creation</h2>{related.map(project => <ProjectRow project={project} />)}</section>}
+  </article>
+</SiteLayout>

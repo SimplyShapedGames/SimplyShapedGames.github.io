@@ -1,0 +1,92 @@
+import { readFile, readdir, stat } from 'node:fs/promises';
+import { resolve, relative, dirname, extname } from 'node:path';
+import assert from 'node:assert/strict';
+import { verifyPrivacy } from './verify-privacy.mjs';
+
+const root = resolve('dist');
+const origin = 'https://simplyshapedgames.fr';
+const errors = [];
+const htmlCache = new Map();
+const walk = async directory => (await Promise.all((await readdir(directory, { withFileTypes: true })).map(entry => entry.isDirectory() ? walk(resolve(directory, entry.name)) : resolve(directory, entry.name)))).flat();
+const files = await walk(root);
+const htmlFiles = files.filter(file => file.endsWith('.html'));
+const decode = text => text.replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+const readHtml = async file => { if (!htmlCache.has(file)) htmlCache.set(file, await readFile(file, 'utf8')); return htmlCache.get(file); };
+let checkedLinks = 0;
+for (const file of htmlFiles) {
+  const html = await readHtml(file);
+  const path = '/' + relative(root, file).replaceAll('\\','/').replace(/index\.html$/, '');
+  const page = new URL(path, origin);
+  if ((html.match(/<h1(?:\s|>)/g) || []).length !== 1) errors.push(`${path}: expected exactly one main heading`);
+  if (!html.includes('class="theme-toggle"')) errors.push(`${path}: missing persistent theme control`);
+  if (!html.includes('<title>') || !html.includes('name="description"')) errors.push(`${path}: missing page metadata`);
+  if (/C:\\Users\\|C:\\Unity\\|TODO|Lorem ipsum/.test(html)) errors.push(`${path}: private source path or unfinished content in output`);
+  const urls = [...html.matchAll(/\b(?:href|src|action)="([^"]*)"/g)].map(m => m[1]);
+  for (const [, srcset] of html.matchAll(/\bsrcset="([^"]*)"/g)) urls.push(...srcset.split(',').map(part => part.trim().split(/\s+/)[0]));
+  for (const raw of urls) {
+    if (!raw || raw === '#') { errors.push(`${path}: empty link`); continue; }
+    const url = new URL(decode(raw), page);
+    if (url.origin !== origin) continue;
+    const pathname = decodeURIComponent(url.pathname);
+    let target = resolve(root, '.' + pathname);
+    if (!target.startsWith(root)) { errors.push(`${path}: path outside output`); continue; }
+    try {
+      if ((await stat(target)).isDirectory()) target = resolve(target, 'index.html');
+      await stat(target);
+      checkedLinks++;
+      if (url.hash && target.endsWith('.html')) {
+        const id = decodeURIComponent(url.hash.slice(1));
+        if (!(await readHtml(target)).includes(`id="${id}"`)) errors.push(`${path}: missing anchor ${raw}`);
+      }
+    } catch { errors.push(`${path}: missing local target ${raw}`); }
+  }
+}
+
+// Every published Markdown record must have a page and be reachable from its category.
+const projectSources = (await readdir('src/content/projects')).filter(file => file.endsWith('.md'));
+const home = await readHtml(resolve(root, 'index.html'));
+let projectCount = 0;
+let galleryCount = 0;
+for (const source of projectSources) {
+  const content = await readFile(resolve('src/content/projects', source), 'utf8');
+  if (/^published: false$|^status: In development$/m.test(content)) continue;
+  const id = source.replace(/\.md$/, '');
+  const category = content.match(/^category: (.+)$/m)?.[1].trim();
+  const status = content.match(/^status: (.+)$/m)?.[1].trim();
+  const target = `/projects/${id}/`;
+  const projectHtml = await readHtml(resolve(root, `projects/${id}/index.html`));
+  assert(home.includes(`href="${target}"`), `${id} not reachable from all creations`);
+  assert((await readHtml(resolve(root, `${category}/index.html`))).includes(`href="${target}"`), `${id} missing from category`);
+  assert(projectHtml.includes(status), `${id} missing status`);
+  const expectedGallery = (content.match(/^  - image: /gm) || []).length;
+  const renderedGallery = (projectHtml.match(/class="gallery-item(?:\s|\")/g) || []).length;
+  assert.equal(renderedGallery, expectedGallery, `${id} gallery does not match its source`);
+  galleryCount += renderedGallery;
+  projectCount++;
+}
+for (const name of ['app-ads.txt', 'CNAME']) assert.deepEqual(await readFile(resolve(root, name)), await readFile(name), `${name} changed in output`);
+for (const page of ['aboutme', 'privacypolicy', 'tags']) assert.deepEqual(await readFile(resolve(root, `${page}.html`)), await readFile(resolve(root, `${page}/index.html`)), `${page}.html compatibility alias differs`);
+const posts = (await readdir('_posts')).filter(file => file.endsWith('.md'));
+const feed = await readFile(resolve(root, 'feed.xml'), 'utf8');
+assert.equal((feed.match(/<item>/g) || []).length, posts.length, 'RSS should contain every post');
+for (const post of posts) {
+  const id = post.replace(/\.md$/, '');
+  for (const slug of new Set([id, id.toLowerCase()])) await stat(resolve(root, slug, 'index.html'));
+  assert(feed.includes(`/${id}/`), `${id} missing from RSS`);
+}
+assert((await readHtml(resolve(root,'privacypolicy/index.html'))).includes('request-user-data-deletion'), 'Data deletion section is missing');
+assert((await readFile(resolve(root, 'robots.txt'), 'utf8')).includes('sitemap-index.xml'));
+await stat(resolve(root, 'sitemap-index.xml'));
+await stat(resolve(root, '.nojekyll'));
+await stat(resolve(root, '404.html'));
+for (const file of files.filter(file => extname(file) === '.css')) {
+  for (const [,raw] of (await readFile(file, 'utf8')).matchAll(/url\(["']?([^"')]+)["']?\)/g)) {
+    if (/^(data:|https?:)/.test(raw)) continue;
+    const target = raw.startsWith('/') ? resolve(root, '.' + raw) : resolve(dirname(file), raw);
+    try { await stat(target); } catch { errors.push(`Missing stylesheet asset ${raw}`); }
+  }
+}
+if (errors.length) { console.error(errors.join('\n')); process.exit(1); }
+await verifyPrivacy();
+console.log(`Verified ${projectCount} project pages, ${galleryCount} gallery images, ${posts.length} original posts, ${htmlFiles.length} HTML files and ${checkedLinks} local links/assets.`);
+console.log('Legacy URLs, RSS, privacy section, CNAME and app-ads.txt passed. External service availability and browser rendering are not covered by this static check.');

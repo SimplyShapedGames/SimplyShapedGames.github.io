@@ -1,0 +1,15 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+const social = [
+  ['GitHub','https://github.com/SimplyShapedGames'],
+  ['YouTube','https://www.youtube.com/channel/UCxrhpSKWBs58F1VbKxD07hg'],
+  ['LinkedIn','https://www.linkedin.com/company/simplyshapedgames/'],
+  ['Instagram','https://www.instagram.com/simplyshapedgames/'],
+  ['Facebook','https://www.facebook.com/people/Simply-Shaped-Games/100078691517681/'],
+  ['Reddit','https://www.reddit.com/user/SimplyShapedGames'],
+  ['X / Twitter','https://twitter.com/StormEckhart2'],
+];
+---
+<SiteLayout title="Contact" active="contact" description="Get in touch with Storm Eckhart at SimplyShapedGames for project questions, support or web work.">
+  <div class="page-shell contact-page"><header class="page-heading"><p class="eyebrow">Let's talk</p><h1>Say hello<span class="blue-text">.</span></h1><p>A question, a bug report, or a project in mind?</p></header><div class="contact-layout"><div><p class="contact-label">Email Storm</p><a class="contact-email" href="mailto:stormeckhart@simplyshapedgames.fr">stormeckhart@<br/>simplyshapedgames.fr <span aria-hidden="true">↗</span></a><p class="contact-help">For game or mod support, include the project name, your device or platform, and what happened.</p><a class="text-link" href="/privacypolicy/#request-user-data-deletion">Privacy & data deletion requests ↗</a></div><nav class="social-links" aria-label="Find SimplyShapedGames elsewhere">{social.map(([title,url]) => <a href={url}>{title}<span aria-hidden="true">↗</span></a>)}</nav></div></div>
+</SiteLayout>
