@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import SquarePreview from './SquarePreview.astro';
 import type { CollectionEntry } from 'astro:content';
 import { projectArtwork } from '../lib/art';
 interface Props { project: CollectionEntry<'projects'>; index?: number; }
@@ -8,7 +8,7 @@ const { data, id } = project;
 const art = projectArtwork(data, 1);
 ---
 <a href={`/projects/${id}/`} class:list={['project-card', `card-${id}`, { 'project-card-lead': index === 0 }]}>
-  <span class="game-icon-frame">{art && <Image src={art} alt={`${data.title} game icon`} widths={[320, 512, 800]} sizes="(max-width: 560px) 42vw, (max-width: 1200px) 30vw, 21vw" format="webp" loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} class="project-art" />}</span>
+  <span class="game-icon-frame">{art && <SquarePreview src={art} alt={`${data.title} game icon`} sizes="(max-width: 560px) 42vw, (max-width: 1200px) 30vw, 21vw" loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} class="project-art" />}</span>
   <span class="card-topline"><span>0{index + 1} / Game</span><span class="round-arrow" aria-hidden="true">↗</span></span>
   <span class="card-caption"><strong>{data.title}</strong><span>{data.platforms.join(' · ')}</span></span>
 </a>

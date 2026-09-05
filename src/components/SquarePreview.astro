@@ -1,0 +1,18 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  widths?: number[];
+  sizes: string;
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  class?: string;
+}
+const { src, alt, widths = [320, 512, 800], sizes, loading = 'lazy', fetchpriority = 'auto', class: className } = Astro.props;
+const size = Math.min(Math.max(...widths), src.width, src.height);
+// Panoramic print previews show the opening panel; detail pages retain the whole design.
+const position = src.width / src.height > 3 ? 'left top' : 'center';
+---
+<Image src={src} alt={alt} width={size} height={size} widths={widths.filter(width => width <= size)} sizes={sizes} fit="cover" position={position} format="webp" loading={loading} fetchpriority={fetchpriority} class:list={['square-preview', className]} />

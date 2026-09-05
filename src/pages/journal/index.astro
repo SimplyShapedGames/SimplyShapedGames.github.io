@@ -1,6 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { Image } from 'astro:assets';
+import SquarePreview from '../../components/SquarePreview.astro';
 import { journalArtwork } from '../../lib/art';
 import { allPosts, postUrl, postDate, formatDate } from '../../lib/catalogue';
 const posts = await allPosts();
@@ -10,7 +10,7 @@ const posts = await allPosts();
     <header class="page-heading"><p class="eyebrow">Notes from SimplyShapedGames</p><h1>Journal<span class="blue-text">.</span></h1><p>New releases and news along the way.</p></header>
     <div class="journal-grid">{posts.map(post => {
       const image = journalArtwork(post.data, 1);
-      return <article class="journal-card"><a href={postUrl(post.id)}>{image && <div class="journal-image"><Image src={image} alt={`${post.data.title} artwork`} widths={[320, 512, 800]} sizes="(max-width: 560px) 90vw, (max-width: 800px) 42vw, 28vw" format="webp" loading="lazy" /></div>}<div class="journal-card-body"><time datetime={postDate(post.id).toISOString()}>{formatDate(postDate(post.id))}</time><h2>{post.data.title} <span aria-hidden="true">↗</span></h2><p>{post.data.subtitle}</p></div></a></article>;
+      return <article class="journal-card"><a href={postUrl(post.id)}>{image && <div class="journal-image"><SquarePreview src={image} alt={`${post.data.title} — ${image.width / image.height > 3 ? 'artwork detail' : 'preview'}`} sizes="(max-width: 560px) 90vw, (max-width: 800px) 42vw, 28vw" /></div>}<div class="journal-card-body"><time datetime={postDate(post.id).toISOString()}>{formatDate(postDate(post.id))}</time><h2>{post.data.title} <span aria-hidden="true">↗</span></h2><p>{post.data.subtitle}</p></div></a></article>;
     })}</div>
     <div class="journal-tools"><a class="text-link" href="/tags/">Browse by tag ↗</a><a class="text-link" href="/feed.xml">Follow with RSS ↗</a></div>
   </div>

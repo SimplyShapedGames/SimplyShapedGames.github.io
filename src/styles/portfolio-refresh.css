@@ -8,11 +8,11 @@
 .project-card .card-caption strong{font-size:clamp(1.1rem,1.6vw,1.6rem)}
 .project-card .card-caption>span{font-size:.875rem}
 .journal-image{aspect-ratio:1}
-.journal-image img{object-fit:contain}
-.row-icon img{object-fit:contain}
+.journal-image img{object-fit:cover}
+.row-icon img{object-fit:cover}
 .project-row[href="/projects/geneva-window-sticker/"] .row-icon{background:var(--yellow)}
-.collection-art>img{object-fit:contain}
-.collection-art{background:var(--surface)}
+.collection-art>img,.collection-copycat-expansion .collection-art>img,.collection-geneva-window-sticker .collection-art>img{object-fit:cover;padding:0}
+.collection-art{aspect-ratio:1;background:var(--surface)}
 .website-preview img{object-position:top center}
 /* A transparent cutout lets the same surface token colour all the image panels. */
 .about-art.about-collage{min-height:0;aspect-ratio:1122/1402;padding:0;background:var(--surface);container-type:inline-size}

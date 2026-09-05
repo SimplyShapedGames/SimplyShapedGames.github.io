@@ -7,6 +7,7 @@ platforms: [Web]
 technologies: [WordPress, PHP, CSS]
 role: Website maintenance and targeted improvements
 cover: gymboreeWebsite
+icon: gymboreeWebsiteSquare
 imageNote: Screenshot of the public Geneva website, captured 5 September 2026.
 order: 6
 gallery:

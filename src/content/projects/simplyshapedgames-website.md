@@ -7,6 +7,7 @@ platforms: [Web]
 technologies: [Astro, TypeScript, GitHub Pages]
 role: Website design and development
 cover: ssgWebsite
+icon: ssgWebsiteSquare
 imageNote: Screenshot of this website's Creations page.
 order: 7
 related: [gymboree-geneva]

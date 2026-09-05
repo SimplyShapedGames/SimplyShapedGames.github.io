@@ -88,5 +88,6 @@ for (const file of files.filter(file => extname(file) === '.css')) {
 }
 if (errors.length) { console.error(errors.join('\n')); process.exit(1); }
 await verifyPrivacy();
+await import('./verify-square-previews.mjs');
 console.log(`Verified ${projectCount} project pages, ${galleryCount} gallery images, ${posts.length} original posts, ${htmlFiles.length} HTML files and ${checkedLinks} local links/assets.`);
 console.log('Legacy URLs, RSS, privacy section, CNAME and app-ads.txt passed. External service availability and browser rendering are not covered by this static check.');

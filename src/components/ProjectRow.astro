@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import SquarePreview from './SquarePreview.astro';
 import type { CollectionEntry } from 'astro:content';
 import { projectArtwork } from '../lib/art';
 interface Props { project: CollectionEntry<'projects'>; }
@@ -9,7 +9,7 @@ const marks = { games: '◒', mods: '◧', websites: '⌘', design: '◐' };
 ---
 <a class:list={['project-row', `row-${data.category}`]} href={`/projects/${id}/`}>
   <span class:list={['row-icon', data.category === 'mods' ? 'blue' : 'coral']}>
-    {art ? <Image src={art} alt="" width={88} height={88} fit="contain" format="webp" loading="lazy" /> : <span aria-hidden="true">{marks[data.category]}</span>}
+    {art ? <SquarePreview src={art} alt="" widths={[88]} sizes="44px" /> : <span aria-hidden="true">{marks[data.category]}</span>}
   </span>
   <span class="row-name">{data.title}<small><span class:list={['status-dot', { 'is-development': data.status === 'In development' }]}></span>{data.status}{data.platforms.length ? ` · ${data.platforms.join(' / ')}` : ''}</small></span>
   <span class:list={['geometric-ribbon', { 'ribbon-web': data.category === 'websites', 'ribbon-dev': data.status === 'In development' }]} aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>

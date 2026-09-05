@@ -2,7 +2,7 @@
 layout: post
 title: A little website care for Gymboree Geneva
 subtitle: Clearer layouts and smoother navigation in English and French.
-image: gymboreeWebsite
+image: gymboreeWebsiteSquare
 wide-image: gymboreeWebsite
 tags: [websites, wordpress, client-work]
 related_projects: [gymboree-geneva]

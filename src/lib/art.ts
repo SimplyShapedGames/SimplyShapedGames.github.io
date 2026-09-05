@@ -14,7 +14,9 @@ import gymboreeReopening from '../assets/projects/gallery/gymboree-reopening.png
 import witchPlayback from '../assets/projects/gallery/witch-playback.jpg';
 import gymboreeWebsite from '../assets/projects/gymboree-website.png';
 import ssgWebsite from '../assets/projects/ssg-website.png';
-export const artwork: Record<string, ImageMetadata> = { shapedash, pieceperfect, slide, pieceperfectIcon, slideIcon, copycat, witch, witchIcon, sticker, copycatMaterials, copycatSnow, gymboreeReopening, witchPlayback, gymboreeWebsite, ssgWebsite };
+import gymboreeWebsiteSquare from '../assets/projects/gymboree-website-square.png';
+import ssgWebsiteSquare from '../assets/projects/ssg-website-square.png';
+export const artwork: Record<string, ImageMetadata> = { shapedash, pieceperfect, slide, pieceperfectIcon, slideIcon, copycat, witch, witchIcon, sticker, copycatMaterials, copycatSnow, gymboreeReopening, witchPlayback, gymboreeWebsite, ssgWebsite, gymboreeWebsiteSquare, ssgWebsiteSquare };
 
 const legacyArtwork: Record<string, ImageMetadata> = {
   '/assets/img/GameLogo_ShapeDash.png': shapedash,

@@ -2,7 +2,8 @@
 layout: post
 title: A home for the whole collection
 subtitle: Games, mods, websites and design work, brought together.
-image: ssgWebsite
+image: ssgWebsiteSquare
+wide-image: ssgWebsite
 tags: [websites, simplyshapedgames]
 related_projects: [simplyshapedgames-website]
 ---
