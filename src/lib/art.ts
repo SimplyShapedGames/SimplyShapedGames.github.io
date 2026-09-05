@@ -6,6 +6,7 @@ import pieceperfectIcon from '../../assets/img/Sprite_GameLogo2.png';
 import slideIcon from '../../assets/img/GameLogo_Slide.png';
 import copycat from '../assets/projects/copycat-expansion.png';
 import witch from '../assets/projects/witch-who-laughs.jpg';
+import witchIcon from '../assets/projects/witch-who-laughs-icon.jpg';
 import sticker from '../assets/projects/geneva-window-sticker.png';
 import copycatMaterials from '../assets/projects/gallery/copycat-materials.png';
 import copycatSnow from '../assets/projects/gallery/copycat-snow.png';
@@ -13,7 +14,7 @@ import gymboreeReopening from '../assets/projects/gallery/gymboree-reopening.png
 import witchPlayback from '../assets/projects/gallery/witch-playback.jpg';
 import gymboreeWebsite from '../assets/projects/gymboree-website.png';
 import ssgWebsite from '../assets/projects/ssg-website.png';
-export const artwork: Record<string, ImageMetadata> = { shapedash, pieceperfect, slide, pieceperfectIcon, slideIcon, copycat, witch, sticker, copycatMaterials, copycatSnow, gymboreeReopening, witchPlayback, gymboreeWebsite, ssgWebsite };
+export const artwork: Record<string, ImageMetadata> = { shapedash, pieceperfect, slide, pieceperfectIcon, slideIcon, copycat, witch, witchIcon, sticker, copycatMaterials, copycatSnow, gymboreeReopening, witchPlayback, gymboreeWebsite, ssgWebsite };
 
 const legacyArtwork: Record<string, ImageMetadata> = {
   '/assets/img/GameLogo_ShapeDash.png': shapedash,

@@ -7,6 +7,7 @@ platforms: [Left 4 Dead 2]
 technologies: [Source, Audio]
 role: Sound mod design and implementation
 cover: witch
+icon: witchIcon
 order: 5
 gallery:
   - image: witchPlayback

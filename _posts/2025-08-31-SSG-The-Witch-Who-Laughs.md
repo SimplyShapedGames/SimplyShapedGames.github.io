@@ -2,7 +2,8 @@
 layout: post
 title: Meet The Witch Who Laughs
 subtitle: A different sound for a familiar Left 4 Dead 2 encounter.
-image: witch
+image: witchIcon
+wide-image: witch
 tags: [mods, left4dead2, publishing]
 related_projects: [the-witch-who-laughs]
 ---

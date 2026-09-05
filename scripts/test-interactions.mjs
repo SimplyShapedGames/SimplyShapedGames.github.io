@@ -99,6 +99,29 @@ test('original game stories retain their dates, artwork and Android links withou
   assert.equal(titles.size, 3); assert.equal(subtitles.size, 3);
   assert(!titles.has(undefined) && !subtitles.has(undefined));
 });
+test('Witch previews use the square Workshop image and retain wide article artwork', async () => {
+  const artSource = await readFile('src/lib/art.ts', 'utf8');
+  const artwork = {};
+  for (const key of ['witchIcon', 'witch', 'witchPlayback']) {
+    const asset = artSource.match(new RegExp(`import ${key} from ['"]([^'"]+)['"]`))?.[1];
+    assert(asset, `Missing ${key} artwork import`);
+    artwork[key] = await sharp(await readFile(new URL(asset, new URL('../src/lib/art.ts', import.meta.url)))).metadata();
+  }
+  assert.equal(artwork.witchIcon.width, artwork.witchIcon.height);
+  const context = { artwork, legacyArtwork: {} };
+  const selectors = artSource.slice(artSource.indexOf('export function closestArtwork')).replaceAll('export function', 'function');
+  runInNewContext(ts.transpileModule(selectors, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText, context);
+  const frontmatter = source => Object.fromEntries([...source.split('---')[1].matchAll(/^([\w-]+): (.+)$/gm)].map(([, key, value]) => [key, value.trim()]));
+  for (const [file, wide] of [['2025-08-31-SSG-The-Witch-Who-Laughs', 'witch'], ['2026-09-02-SSG-Witch-Audio-Update', 'witchPlayback']]) {
+    const data = frontmatter(await readFile(`_posts/${file}.md`, 'utf8'));
+    assert.equal(context.journalArtwork(data, 1), artwork.witchIcon);
+    assert.equal(context.journalArtwork(data, 1.875), artwork[wide]);
+  }
+  const project = frontmatter(await readFile('src/content/projects/the-witch-who-laughs.md', 'utf8'));
+  assert.equal(context.projectArtwork(project, 1), artwork.witchIcon);
+  assert.equal(context.projectArtwork(project, 16 / 9), artwork.witch);
+});
+
 function searchContext(query = '') {
   const form=element(), input=element(), count=element(), empty=element();
   const entries=['shapedash a colourful runner game android unity released','create copycat expansion mod minecraft neoforge released','gymboree geneva website web wordpress ongoing maintenance'].map(text => ({...element(), dataset:{search:text}}));
