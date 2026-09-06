@@ -1,6 +1,8 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { resolve, basename, extname } from 'node:path';
+import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
+import sharp from 'sharp';
 
 async function optionalFiles(directory) {
   try {
@@ -32,5 +34,16 @@ export async function verifyPrivacy() {
       assert(!/<h2[^>]*>taking shape/.test(text), `Work-in-progress section remains in ${file}`);
     }
   }
+  const flyerAssets = [
+    resolve('src/assets/projects/gallery/gymboree-reopening-flyer.png'),
+    resolve('src/assets/projects/gymboree-reopening-flyer-banner.png'),
+    resolve('src/assets/projects/gymboree-reopening-flyer-square.png'),
+  ];
+  for (const file of flyerAssets) {
+    const metadata = await sharp(file).metadata();
+    assert(!metadata.exif && !metadata.xmp && !metadata.iptc, `Private authoring metadata remains in ${file}`);
+  }
+  const flyerPixels = await sharp(flyerAssets[0]).raw().toBuffer();
+  assert.equal(createHash('sha256').update(flyerPixels).digest('hex'), '0877e230004bf5006818a1ddd1fd12c0f0750813e4a15a7f814d162d89140153', 'Public reopening flyer pixels differ from the supplied artwork');
   console.log(`Privacy verified: no development entries in generated pages; ${hiddenSources.length} local private projects and ${privateAssets.length} private artwork names checked against output.`);
 }

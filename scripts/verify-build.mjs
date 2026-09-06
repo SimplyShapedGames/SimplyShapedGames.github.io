@@ -70,6 +70,20 @@ for (const source of projectSources) {
   galleryCount += renderedGallery;
   projectCount++;
 }
+const flyerId = 'gymboree-reopening-flyer';
+const stickerId = 'geneva-window-sticker';
+const assertAdjacentDesigns = (ids, page) => {
+  const stickerIndex = ids.indexOf(stickerId);
+  const flyerIndex = ids.indexOf(flyerId);
+  assert(stickerIndex >= 0 && flyerIndex === stickerIndex + 1, `${page}: reopening flyer must appear immediately after the newer window sticker`);
+};
+assertAdjacentDesigns([...home.matchAll(/<a class="project-row row-design" href="\/projects\/([^/]+)\//g)].map(match => match[1]), 'All creations');
+const designHtml = await readHtml(resolve(root, 'design/index.html'));
+assertAdjacentDesigns([...designHtml.matchAll(/<article class="collection-card collection-([^"]+)"/g)].map(match => match[1]), 'Design creations');
+const flyerHtml = await readHtml(resolve(root, `projects/${flyerId}/index.html`));
+assert(flyerHtml.includes('9 June 2026'), 'Reopening flyer is missing its completion date');
+assert(flyerHtml.includes('/_astro/gymboree-reopening-flyer-banner.'), 'Reopening flyer is missing its landscape banner');
+assert(/\/_astro\/gymboree-reopening-flyer\.[^"\s]+/.test(flyerHtml), 'Reopening flyer is missing its complete portrait artwork');
 for (const name of ['app-ads.txt', 'CNAME']) assert.deepEqual(await readFile(resolve(root, name)), await readFile(name), `${name} changed in output`);
 for (const page of ['aboutme', 'privacypolicy', 'tags']) assert.deepEqual(await readFile(resolve(root, `${page}.html`)), await readFile(resolve(root, `${page}/index.html`)), `${page}.html compatibility alias differs`);
 const posts = (await readdir('_posts')).filter(file => file.endsWith('.md'));

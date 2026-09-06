@@ -12,12 +12,15 @@ import sticker from '../assets/projects/geneva-window-sticker.png';
 import copycatMaterials from '../assets/projects/gallery/copycat-materials.png';
 import copycatSnow from '../assets/projects/gallery/copycat-snow.png';
 import gymboreeReopening from '../assets/projects/gallery/gymboree-reopening.png';
+import gymboreeReopeningFlyer from '../assets/projects/gallery/gymboree-reopening-flyer.png';
+import gymboreeReopeningFlyerBanner from '../assets/projects/gymboree-reopening-flyer-banner.png';
+import gymboreeReopeningFlyerSquare from '../assets/projects/gymboree-reopening-flyer-square.png';
 import witchPlayback from '../assets/projects/gallery/witch-playback.jpg';
 import gymboreeWebsite from '../assets/projects/gymboree-website.png';
 import ssgWebsite from '../assets/projects/ssg-website.png';
 import gymboreeWebsiteSquare from '../assets/projects/gymboree-website-square.png';
 import ssgWebsiteSquare from '../assets/projects/ssg-website-square.png';
-export const artwork: Record<string, ImageMetadata> = { shapedash, shapedashBanner, pieceperfect, slide, pieceperfectIcon, slideIcon, copycat, witch, witchIcon, sticker, copycatMaterials, copycatSnow, gymboreeReopening, witchPlayback, gymboreeWebsite, ssgWebsite, gymboreeWebsiteSquare, ssgWebsiteSquare };
+export const artwork: Record<string, ImageMetadata> = { shapedash, shapedashBanner, pieceperfect, slide, pieceperfectIcon, slideIcon, copycat, witch, witchIcon, sticker, copycatMaterials, copycatSnow, gymboreeReopening, gymboreeReopeningFlyer, gymboreeReopeningFlyerBanner, gymboreeReopeningFlyerSquare, witchPlayback, gymboreeWebsite, ssgWebsite, gymboreeWebsiteSquare, ssgWebsiteSquare };
 
 const legacyArtwork: Record<string, ImageMetadata> = {
   '/assets/img/GameLogo_ShapeDash.png': shapedash,

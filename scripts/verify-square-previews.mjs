@@ -32,4 +32,8 @@ for (const page of ['journal/index.html', 'websites/index.html']) {
   const html = await readFile(resolve(root, page), 'utf8');
   for (const website of ['gymboree', 'ssg']) assert(html.includes(`${website}-website-square.`), `${page}: missing square ${website} screenshot`);
 }
+for (const page of ['index.html', 'design/index.html', 'projects/geneva-window-sticker/index.html']) {
+  const html = await readFile(resolve(root, page), 'utf8');
+  assert(html.includes('gymboree-reopening-flyer-square.'), `${page}: missing dedicated square reopening flyer preview`);
+}
 console.log(`Square previews verified: ${previews} image slots and ${assets.size} responsive assets, including both website screenshots.`);

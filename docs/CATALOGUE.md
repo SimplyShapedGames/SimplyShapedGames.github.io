@@ -1,6 +1,6 @@
 # Public catalogue
 
-The website showcases eight current company creations: three released mobile games, two published mods, two maintained websites and one completed design adaptation. Older student/team work is excluded.
+The website showcases nine current company creations: three released mobile games, two published mods, two maintained websites and two completed design adaptations. Older student/team work is excluded.
 
 | Creation | Category | Status |
 | --- | --- | --- |
@@ -12,6 +12,7 @@ The website showcases eight current company creations: three released mobile gam
 | Gymboree Geneva | Websites | Ongoing maintenance |
 | SimplyShapedGames website | Websites | Ongoing maintenance |
 | Geneva window sticker | Design | Completed |
+| Gymboree reopening flyer | Design | Completed |
 
 ## Privacy
 
@@ -25,7 +26,7 @@ The static build checks for private draft identifiers and asset filenames when t
 - Gymboree's cover is a real screenshot of its public Geneva page, captured on 5 September 2026. This is Geneva-only maintenance within an existing website and brand, not original authorship of the whole site.
 - The company-site cover is a screenshot of this local redesign, not a claim that the redesign is already publicly deployed.
 - The About panel is a generated geometric collage inspired by released/completed artwork. It is an illustration, not a documentary screenshot. Its overlaid headline remains HTML text.
-- Original source artwork remains unchanged. Website screenshots contain no device frames.
+- Complete artwork is preserved without visual changes; public source copies strip private authoring metadata. Purpose-built banner and square-preview crops are used where the layout requires them, without stretching or padding. Website screenshots contain no device frames.
 
 ## Journal chronology
 

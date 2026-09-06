@@ -13,7 +13,7 @@ order: 6
 gallery:
   - image: gymboreeReopening
     alt: French Gymboree reopening campaign artwork in orange with a children's play photograph
-    caption: Geneva reopening campaign artwork from the local project collection, August 2026. Not a website screenshot or a current offer.
+    caption: Related print work — landscape artwork from the reopening campaign. Not a website screenshot or a current offer.
   - image: sticker
     alt: The final panoramic orange Gymboree Geneva window sticker design
     caption: Related print work — the final Geneva window-sticker adaptation.
@@ -22,7 +22,7 @@ links:
     url: https://gymboreeclasses-dach.com/geneva/
   - label: Visit the French website
     url: https://gymboreeclasses-dach.com/fr/geneve/
-related: [geneva-window-sticker]
+related: [geneva-window-sticker, gymboree-reopening-flyer]
 ---
 ## Keeping the details in good shape.
 

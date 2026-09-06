@@ -9,7 +9,7 @@ role: Adaptation of existing artwork
 cover: sticker
 imageNote: Final design adaptation
 order: 8
-related: [gymboree-geneva]
+related: [gymboree-geneva, gymboree-reopening-flyer]
 ---
 ## From page to window.
 
