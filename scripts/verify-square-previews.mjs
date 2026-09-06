@@ -36,4 +36,8 @@ for (const page of ['index.html', 'design/index.html', 'projects/geneva-window-s
   const html = await readFile(resolve(root, page), 'utf8');
   assert(html.includes('gymboree-reopening-flyer-square.'), `${page}: missing dedicated square reopening flyer preview`);
 }
+const journal = await readFile(resolve(root, 'journal/index.html'), 'utf8');
+assert(journal.includes('gymboree-reopening-flyer-square.'), 'journal/index.html: missing dedicated square reopening flyer preview');
+const flyerPost = await readFile(resolve(root, '2026-06-09-SSG-Gymboree-Reopening-Flyer/index.html'), 'utf8');
+assert(flyerPost.includes('gymboree-reopening-flyer-banner.'), 'Reopening flyer journal entry is missing its landscape article artwork');
 console.log(`Square previews verified: ${previews} image slots and ${assets.size} responsive assets, including both website screenshots.`);

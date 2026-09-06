@@ -30,11 +30,12 @@ The static build checks for private draft identifiers and asset filenames when t
 
 ## Journal chronology
 
-The three original game posts retain their dates and URLs. Six retrospective/milestone entries were written on 5 September 2026 at the owner's request and dated to the events they describe; they are not evidence that those articles existed on the event dates.
+The three original game posts retain their dates and URLs. Six retrospective/milestone entries were written on 5 September 2026 at the owner's request and dated to the events they describe. The Gymboree reopening flyer entry was added on 6 September 2026 and dated to its documented completion on 9 June 2026. These dates record the work, not when the retrospective articles first appeared online.
 
 | Event date | Entry | Evidence |
 | --- | --- | --- |
 | 31 August 2025 | The Witch Who Laughs debut | [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3559560048), original creation timestamp 1756647329 |
+| 9 June 2026 | Gymboree reopening flyer | Source artwork creation date and owner's supplied completion date |
 | 25 August 2026 | Gymboree Geneva website care | Dated completion records for published bilingual page/navigation/hero fixes; no booking-system claim |
 | 31 August 2026 | Geneva window sticker | Final orange-contact print adaptation delivery record |
 | 1 September 2026 | Copycat Expansion | [Initial release 0.1.17](https://www.curseforge.com/minecraft/mc-mods/create-copycat-expansion/files/8787849), upload date; no separate moderation date exposed |

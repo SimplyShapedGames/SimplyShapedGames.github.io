@@ -84,6 +84,14 @@ const flyerHtml = await readHtml(resolve(root, `projects/${flyerId}/index.html`)
 assert(flyerHtml.includes('9 June 2026'), 'Reopening flyer is missing its completion date');
 assert(flyerHtml.includes('/_astro/gymboree-reopening-flyer-banner.'), 'Reopening flyer is missing its landscape banner');
 assert(/\/_astro\/gymboree-reopening-flyer\.[^"\s]+/.test(flyerHtml), 'Reopening flyer is missing its complete portrait artwork');
+const flyerPostId = '2026-06-09-SSG-Gymboree-Reopening-Flyer';
+const flyerPostUrl = `/${flyerPostId}/`;
+const journalHtml = await readHtml(resolve(root, 'journal/index.html'));
+assert(journalHtml.includes(`href="${flyerPostUrl}"`), 'Reopening flyer journal entry is missing from the journal');
+assert(flyerHtml.includes(`href="${flyerPostUrl}"`), 'Reopening flyer journal entry is not linked from its creation page');
+const flyerPostHtml = await readHtml(resolve(root, flyerPostId, 'index.html'));
+assert(flyerPostHtml.includes('9 June 2026'), 'Reopening flyer journal entry is missing its event date');
+assert(flyerPostHtml.includes('href="/projects/gymboree-reopening-flyer/"'), 'Reopening flyer journal entry is not linked back to its creation');
 for (const name of ['app-ads.txt', 'CNAME']) assert.deepEqual(await readFile(resolve(root, name)), await readFile(name), `${name} changed in output`);
 for (const page of ['aboutme', 'privacypolicy', 'tags']) assert.deepEqual(await readFile(resolve(root, `${page}.html`)), await readFile(resolve(root, `${page}/index.html`)), `${page}.html compatibility alias differs`);
 const posts = (await readdir('_posts')).filter(file => file.endsWith('.md'));
