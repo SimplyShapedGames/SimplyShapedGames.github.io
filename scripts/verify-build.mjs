@@ -58,6 +58,12 @@ for (const source of projectSources) {
   assert(home.includes(`href="${target}"`), `${id} not reachable from all creations`);
   assert((await readHtml(resolve(root, `${category}/index.html`))).includes(`href="${target}"`), `${id} missing from category`);
   assert(projectHtml.includes(status), `${id} missing status`);
+  const hero = projectHtml.match(/<img\b[^>]*\bclass="project-banner"[^>]*>/)?.[0];
+  assert(hero, `${id} missing landscape project banner`);
+  const heroWidth = Number(hero.match(/\bwidth="(\d+)"/)?.[1]);
+  const heroHeight = Number(hero.match(/\bheight="(\d+)"/)?.[1]);
+  assert(heroWidth > heroHeight && heroHeight > 0, `${id} is using a square or portrait image in its banner slot`);
+  assert(heroWidth >= 1000, `${id} is using a low-resolution preview in its banner slot`);
   const expectedGallery = (content.match(/^  - image: /gm) || []).length;
   const renderedGallery = (projectHtml.match(/class="gallery-item(?:\s|\")/g) || []).length;
   assert.equal(renderedGallery, expectedGallery, `${id} gallery does not match its source`);

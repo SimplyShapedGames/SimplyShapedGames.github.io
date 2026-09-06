@@ -6,8 +6,9 @@ summary: A colourful 3D arcade runner. Change lanes, switch shapes and find the 
 platforms: [Android]
 technologies: [Unity]
 role: Game design and development
-cover: shapedash
+cover: shapedashBanner
 icon: shapedash
+imageNote: Promotional artwork showing the runner changing shape to pass a row of obstacles.
 featured: true
 order: 1
 links:

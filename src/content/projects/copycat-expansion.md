@@ -6,7 +6,9 @@ summary: Shape paths, till farmland and change decorative material states on Cre
 platforms: [Minecraft]
 technologies: [NeoForge, Create]
 role: Mod design and development
-cover: copycat
+cover: copycatMaterials
+icon: copycat
+imageNote: In-game overview of material appearances across different copycat shapes.
 order: 4
 gallery:
   - image: copycatMaterials

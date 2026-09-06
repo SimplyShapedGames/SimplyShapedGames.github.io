@@ -2,6 +2,8 @@
 .quiet{color:var(--muted)}.blue-text{color:var(--blue)}
 .footer-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem 2rem}.footer-bottom a:hover{color:var(--blue)}.post-share{display:flex;flex-wrap:wrap;gap:.65rem 1rem;border-top:1px solid var(--line);margin-top:2rem;padding-top:1.4rem;font-size:.875rem}.post-share>span{color:var(--muted)}
 .project-heading>*{min-width:0}.project-heading h1,.page-heading h1{overflow-wrap:anywhere}
+/* Keep wide creation covers at their own proportions, without icon padding or a height cap. */
+.project-figure>img.project-banner{display:block;max-height:none;padding:0}
 .brand{height:98px}.brand img{top:-16px}
 .search-toggle{display:grid;place-items:center;width:40px;height:44px;flex:none;margin-left:-1rem}
 .main-nav{margin-right:.5rem}.site-header{gap:1.2rem}
