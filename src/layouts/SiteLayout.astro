@@ -13,6 +13,20 @@ interface Props { title?: string; description?: string; active?: string; image?:
 const { title = 'Creations', description = 'Games, mods and websites by SimplyShapedGames. Explore independent creations by Storm Eckhart.', active = 'creations', image, canonicalPath, articleDate } = Astro.props;
 const canonical = new URL(canonicalPath || Astro.url.pathname, Astro.site);
 const pagePath = canonical.pathname.replace(/^\/|\/$/g, '');
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': new URL('/#organization', Astro.site).href,
+  name: 'SimplyShapedGames',
+  url: new URL('/', Astro.site).href,
+  logo: {
+    '@type': 'ImageObject',
+    url: new URL('/web-app-manifest-512x512.png', Astro.site).href,
+    width: 512,
+    height: 512,
+  },
+  sameAs: ['https://github.com/SimplyShapedGames'],
+};
 const standardSources: Record<string, string> = { '': 'src/pages/index.astro', journal: 'src/pages/journal/index.astro', privacypolicy: 'privacypolicy.md', aboutme: 'src/pages/aboutme.astro', contact: 'src/pages/contact.astro', tags: 'src/pages/tags.astro', search: 'src/pages/search.astro', games: 'src/pages/[category].astro', mods: 'src/pages/[category].astro', websites: 'src/pages/[category].astro', design: 'src/pages/[category].astro' };
 const editSource = pagePath.startsWith('projects/') ? `src/content/projects/${pagePath.slice(9)}.md` : /^\d{4}-\d{2}-\d{2}-/.test(pagePath) ? `_posts/${pagePath}.md` : standardSources[pagePath];
 ---
@@ -26,7 +40,10 @@ const editSource = pagePath.startsWith('projects/') ? `src/content/projects/${pa
     <title>{title} · SimplyShapedGames</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/png" href={logo.src} />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" type="application/rss+xml" title="SimplyShapedGames journal" href="/feed.xml" />
     <meta property="og:title" content={`${title} · SimplyShapedGames`} />
     <meta property="og:site_name" content="SimplyShapedGames" />
@@ -37,6 +54,7 @@ const editSource = pagePath.startsWith('projects/') ? `src/content/projects/${pa
     {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
     {image && <meta name="twitter:image" content={new URL(image, Astro.site)} />}
     <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+    {pagePath === '' && <script is:inline type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />}
     <script is:inline>
       (() => {
         let theme;

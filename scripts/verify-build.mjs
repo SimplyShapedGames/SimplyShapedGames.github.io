@@ -45,6 +45,27 @@ for (const file of htmlFiles) {
 // Every published Markdown record must have a page and be reachable from its category.
 const projectSources = (await readdir('src/content/projects')).filter(file => file.endsWith('.md'));
 const home = await readHtml(resolve(root, 'index.html'));
+for (const favicon of ['/favicon-96x96.png', '/favicon.ico', '/apple-touch-icon.png', '/site.webmanifest']) {
+  assert(home.includes(`href="${favicon}"`), `Home page is missing ${favicon}`);
+}
+assert(home.includes('"@type":"Organization"'), 'Home page is missing Organization structured data');
+assert(home.includes('"name":"SimplyShapedGames"'), 'Organization structured data is missing the company name');
+assert(home.includes('https://simplyshapedgames.fr/web-app-manifest-512x512.png'), 'Organization structured data is missing the stable company logo');
+const brandIconDimensions = new Map([
+  ['favicon-96x96.png', [96, 96]],
+  ['apple-touch-icon.png', [180, 180]],
+  ['web-app-manifest-192x192.png', [192, 192]],
+  ['web-app-manifest-512x512.png', [512, 512]],
+]);
+for (const [name, dimensions] of brandIconDimensions) {
+  const data = await readFile(resolve(root, name));
+  assert(data.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])), `${name} is not a PNG`);
+  assert.deepEqual([data.readUInt32BE(16), data.readUInt32BE(20)], dimensions, `${name} has the wrong dimensions`);
+}
+assert((await stat(resolve(root, 'favicon.ico'))).size > 0, 'favicon.ico is empty');
+const manifest = JSON.parse(await readFile(resolve(root, 'site.webmanifest'), 'utf8'));
+assert.equal(manifest.name, 'SimplyShapedGames', 'Web app manifest has the wrong company name');
+assert.deepEqual(manifest.icons.map(icon => icon.src), ['/web-app-manifest-192x192.png', '/web-app-manifest-512x512.png'], 'Web app manifest icons changed');
 let projectCount = 0;
 let galleryCount = 0;
 for (const source of projectSources) {

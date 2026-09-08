@@ -41,6 +41,19 @@ const expectedCounts = [projects.length, ...categories.map(category => projects.
 const home = await page('/');
 const actualCounts = [...home.matchAll(/<sup>(\d+)<\/sup>/g)].map(match => Number(match[1]));
 assert.deepEqual(actualCounts, expectedCounts, 'Live category counts do not match the catalogue. Fully stop and restart the dev process if content collections were added after startup.');
+for (const [path, expectedType] of [
+  ['/favicon-96x96.png', /^image\/png/],
+  ['/favicon.ico', /^image\/(?:x-icon|vnd\.microsoft\.icon)/],
+  ['/apple-touch-icon.png', /^image\/png/],
+  ['/site.webmanifest', /^(?:application\/manifest\+json|application\/json)/],
+]) {
+  const response = await fetch(new URL(path, origin), { signal: AbortSignal.timeout(15000), redirect: 'error' });
+  const body = await response.arrayBuffer();
+  assert.equal(response.status, 200, `${path}: expected a working brand asset`);
+  assert.match(response.headers.get('content-type') || '', expectedType, `${path}: unexpected content type`);
+  assert(body.byteLength > 0, `${path}: empty brand asset`);
+}
+assert(home.includes('"@type":"Organization"'), 'Live home page is missing Organization structured data');
 const categoryPages = new Map();
 for (const category of categories) categoryPages.set(category, await page(`/${category}/`));
 let galleries = 0;
