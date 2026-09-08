@@ -92,6 +92,9 @@ assert(flyerHtml.includes(`href="${flyerPostUrl}"`), 'Reopening flyer journal en
 const flyerPostHtml = await readHtml(resolve(root, flyerPostId, 'index.html'));
 assert(flyerPostHtml.includes('9 June 2026'), 'Reopening flyer journal entry is missing its event date');
 assert(flyerPostHtml.includes('href="/projects/gymboree-reopening-flyer/"'), 'Reopening flyer journal entry is not linked back to its creation');
+const gymboreeWebsiteHtml = await readHtml(resolve(root, 'projects/gymboree-geneva/index.html'));
+assert(gymboreeWebsiteHtml.includes('captured 8 September 2026'), 'Gymboree Geneva is missing the current screenshot date');
+assert(gymboreeWebsiteHtml.includes('/_astro/gymboree-website.'), 'Gymboree Geneva is missing its live responsive screenshot');
 for (const name of ['app-ads.txt', 'CNAME']) assert.deepEqual(await readFile(resolve(root, name)), await readFile(name), `${name} changed in output`);
 for (const page of ['aboutme', 'privacypolicy', 'tags']) assert.deepEqual(await readFile(resolve(root, `${page}.html`)), await readFile(resolve(root, `${page}/index.html`)), `${page}.html compatibility alias differs`);
 const posts = (await readdir('_posts')).filter(file => file.endsWith('.md'));

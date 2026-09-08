@@ -43,6 +43,18 @@ export async function verifyPrivacy() {
     const metadata = await sharp(file).metadata();
     assert(!metadata.exif && !metadata.xmp && !metadata.iptc, `Private authoring metadata remains in ${file}`);
   }
+  const websiteCaptures = [
+    resolve('src/assets/projects/gymboree-website.png'),
+    resolve('src/assets/projects/gymboree-website-square.png'),
+  ];
+  const [gymboreeWide, gymboreeSquare] = await Promise.all(websiteCaptures.map(async file => {
+    const metadata = await sharp(file).metadata();
+    assert.equal(metadata.format, 'png', `Website capture must remain a real PNG: ${file}`);
+    assert(!metadata.exif && !metadata.xmp && !metadata.iptc && !metadata.icc, `Private capture metadata remains in ${file}`);
+    return metadata;
+  }));
+  assert(gymboreeWide.width > gymboreeWide.height && gymboreeWide.width >= 2000, 'Gymboree website cover must remain a high-resolution landscape capture');
+  assert.equal(gymboreeSquare.width, gymboreeSquare.height, 'Gymboree website preview source must remain square');
   const flyerPixels = await sharp(flyerAssets[0]).raw().toBuffer();
   assert.equal(createHash('sha256').update(flyerPixels).digest('hex'), '0877e230004bf5006818a1ddd1fd12c0f0750813e4a15a7f814d162d89140153', 'Public reopening flyer pixels differ from the supplied artwork');
   console.log(`Privacy verified: no development entries in generated pages; ${hiddenSources.length} local private projects and ${privateAssets.length} private artwork names checked against output.`);

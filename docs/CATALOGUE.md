@@ -23,7 +23,7 @@ The static build checks for private draft identifiers and asset filenames when t
 ## Artwork
 
 - Game cards use the original square game icons; wide article/project slots can use the matching original banner. The closest available aspect ratio is selected, and images are contained rather than distorted.
-- Gymboree's cover is a real screenshot of its public Geneva page, captured on 5 September 2026. This is Geneva-only maintenance within an existing website and brand, not original authorship of the whole site.
+- Gymboree's cover is a real responsive screenshot of its public Geneva page, captured on 8 September 2026. This is Geneva-only maintenance within an existing website and brand, not original authorship of the whole site.
 - The company-site cover is a screenshot of this local redesign, not a claim that the redesign is already publicly deployed.
 - The About panel is a generated geometric collage inspired by released/completed artwork. It is an illustration, not a documentary screenshot. Its overlaid headline remains HTML text.
 - Complete artwork is preserved without visual changes; public source copies strip private authoring metadata. Purpose-built banner and square-preview crops are used where the layout requires them, without stretching or padding. Website screenshots contain no device frames.
