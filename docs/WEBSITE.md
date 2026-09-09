@@ -1,6 +1,6 @@
 # SimplyShapedGames website
 
-The redesigned site is an Astro static portfolio for GitHub Pages. It uses the original logo and project artwork, self-hosted Fredoka/Nunito fonts, light/dark themes and Markdown content. No backend, database, paid hosting or external font request is needed.
+The redesigned site is an Astro static game-development services website for Cloudflare Pages. It uses the original Games logo and artwork, self-hosted Fredoka/Nunito fonts, light/dark themes and Markdown content. No backend, database, paid hosting or external font request is needed. The current Games-only catalogue and migration boundaries are specified in [GAMES-SITE-SPLIT.md](GAMES-SITE-SPLIT.md); wider portfolio-editing notes below are historical context, not permission to add non-game content back to this activity site.
 
 ## Work locally
 
@@ -14,7 +14,7 @@ pnpm test
 pnpm build
 ```
 
-The build creates `dist/`; the build check validates local links, project/category coverage, original post URLs, RSS, policy anchors, fonts, CNAME and app-ads.txt. It is not a browser or external-service availability test.
+The build creates `dist/`; the build check validates local links, game/mod coverage, retained post URLs, RSS, policy anchors, fonts, CNAME and the unchanged app-ads.txt/game-policy sources. It also verifies the exact merged migration redirects, Cloudflare security/preview headers, canonical, robots, custom 404 and dashboard upload limits. It is not a browser or external-service availability test.
 
 With the local server running, also run `pnpm verify:preview` (default `http://127.0.0.1:4321/`). This separately checks actual served category counts, every project, gallery counts, journal, search entries, privacy content, RSS and image responses. A successful build or HTTP 200 alone does not prove the live preview has loaded its collections. For a different local port, run `node scripts/verify-preview.mjs http://127.0.0.1:PORT/`.
 
@@ -38,7 +38,7 @@ Each published entry automatically appears on the home page, its category, searc
 
 Keep adding posts to `_posts/YYYY-MM-DD-Title.md`. The three original Android game posts keep their dated filenames and URLs; their titles, subtitles and copy were rewritten on 5 September 2026 to match the journal's editorial voice. Slide's unavailable iOS listing is no longer advertised. `related_projects` links posts to project slugs. The journal, tags and RSS are generated from those files.
 
-Both original-case and lowercase dated post routes are generated. Windows may show only one physical directory for a case-only pair; GitHub's Linux build materialises both. Original-case routes are canonical and lowercase variants are omitted from the sitemap.
+Retained game posts use original-case canonical URLs. Linux can generate both case variants; Windows may store only one physical directory. Cloudflare `_redirects` therefore appends twelve explicit lowercase-to-canonical rules for the six retained posts, keeping Windows-built uploads compatible. The thirty existing non-game redirects to SimplyShaped remain unchanged. No game privacy or advertising redirect is permitted.
 
 `/aboutme/`, `/privacypolicy/`, `/tags/`, their `.html` aliases, `/feed.xml`, `/app-ads.txt`, `/assets/img/*` and the custom domain are retained. The root privacy policy remains the source; its opening game examples now list released titles only, with the terms otherwise unchanged. The domain and advertising file remain root sources and are copied without modification. Generated copies in `public/` are ignored by Git.
 
@@ -48,16 +48,10 @@ The old Jekyll RSS template is preserved at `docs/legacy/feed.xml`. Leaving it a
 
 ## Publish when approved
 
-Nothing in this local implementation publishes the redesign. The checked-in workflow builds and validates pushes/PRs, but deployment is manual during review.
+The intended provider setup matches SimplyShapedSites: GitHub source, Cloudflare Pages Direct Upload, Squarespace domain registration and Cloudflare DNS. The existing SimplyShapedGames/SimplyShapedGames.github.io repository remains the intended Games source destination. Do not publish this replacement through its old GitHub Pages workflow or replace the live site before the coordinated cutover.
 
-When the redesign and development-project visibility are approved:
+The updated workflow checks and produces a downloadable `simplyshapedgames-cloudflare-pages-<commit>` ZIP of the public `dist/` output only. It has read-only repository permissions and no deployment job, API token or account binding. Local `pnpm package:cloudflare` reruns complete output checks and creates a byte-verified `validation/cloudflare-pages/release-*/site/` folder plus a separate private manifest. Upload only the `site` folder or the checked CI artifact, never the source checkout.
 
-1. Commit and push the reviewed changes to `master`.
-2. In GitHub Settings → Pages, choose **GitHub Actions** as the source. Do not leave it using a branch-based Jekyll build.
-3. Preserve the existing custom domain `simplyshapedgames.fr` and HTTPS settings.
-4. Run **Website checks and GitHub Pages** from Actions on `master`, selecting **Publish this checked version to the public website**.
-5. Confirm the deployment, then check the custom domain, both themes, mobile layout, original posts, privacy page and `/app-ads.txt` on the public site.
+Follow [the Cloudflare Pages cutover guide](CLOUDFLARE-PAGES.md). Preview the new Games site first, verify the SimplyShaped parent is live for all thirty non-game migration destinations, preserve DNS mail records and rollback evidence, then change only the verified domain mappings. Retained CNAME/.nojekyll files are compatibility artifacts, not Cloudflare configuration.
 
-The Actions workflow, repository Pages settings and live deployment have not been executed or changed by this local build.
-
-References: [Astro GitHub Pages guide](https://docs.astro.build/en/guides/deploy/github/), [pnpm setup action](https://github.com/pnpm/setup).
+No account, repository setting, source visibility, DNS record or public deployment is changed by these scripts.

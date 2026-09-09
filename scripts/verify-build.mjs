@@ -2,6 +2,8 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import { resolve, relative, dirname, extname } from 'node:path';
 import assert from 'node:assert/strict';
 import { verifyPrivacy } from './verify-privacy.mjs';
+import { mergePagesRedirects } from './cloudflare-pages.mjs';
+import { gameProjectIds, movedProjectIds, movedPostIds, publicGameProjects, publicGamePosts, homeCatalogueCounts, verifyRedirects, verifyPreservedGameSources } from './site-contract.mjs';
 
 const root = resolve('dist');
 const origin = 'https://simplyshapedgames.fr';
@@ -21,6 +23,7 @@ for (const file of htmlFiles) {
   if (!html.includes('class="theme-toggle"')) errors.push(`${path}: missing persistent theme control`);
   if (!html.includes('<title>') || !html.includes('name="description"')) errors.push(`${path}: missing page metadata`);
   if (/C:\\Users\\|C:\\Unity\\|TODO|Lorem ipsum/.test(html)) errors.push(`${path}: private source path or unfinished content in output`);
+  if (/(?:€\s*500|500\s*€)/i.test(html)) errors.push(`${path}: Games services must not inherit the Sites fixed-price offer`);
   const urls = [...html.matchAll(/\b(?:href|src|action)="([^"]*)"/g)].map(m => m[1]);
   for (const [, srcset] of html.matchAll(/\bsrcset="([^"]*)"/g)) urls.push(...srcset.split(',').map(part => part.trim().split(/\s+/)[0]));
   for (const raw of urls) {
@@ -43,8 +46,17 @@ for (const file of htmlFiles) {
 }
 
 // Every published Markdown record must have a page and be reachable from its category.
-const projectSources = (await readdir('src/content/projects')).filter(file => file.endsWith('.md'));
+const projectSources = (await publicGameProjects()).map(project => project.file);
 const home = await readHtml(resolve(root, 'index.html'));
+assert.deepEqual(homeCatalogueCounts(home), [5, 3, 2], 'Home must showcase the five approved games/mods, including both mods');
+assert(home.includes('id="games-mods"') && home.includes('id="services"'), 'Home needs real showcase and services anchors');
+assert(home.includes('href="/contact/"'), 'Project enquiry CTA must lead to the real contact page');
+assert(home.includes('href="https://simplyshaped.fr/"') && home.includes('href="https://simplyshapedsites.fr/"'), 'Games site must link to its parent and sister activity');
+const redirects = await verifyRedirects();
+assert.equal(await readFile(resolve(root, '_redirects'), 'utf8'), mergePagesRedirects(await readFile('public/_redirects', 'utf8'), await publicGamePosts()), 'Cloudflare output must preserve all original migrations plus the exact retained-game case aliases');
+await verifyPreservedGameSources();
+const actualProjectIds = (await readdir(resolve(root, 'projects'), { withFileTypes: true })).filter(entry => entry.isDirectory()).map(entry => entry.name).sort();
+assert.deepEqual(actualProjectIds, [...gameProjectIds].sort(), 'Only the five approved game/mod detail routes belong on this domain');
 const indexNowKey = '895587a45b4a41d2a0b4f8e2c126ffcc';
 assert.equal((await readFile(resolve(root, `${indexNowKey}.txt`), 'utf8')).trim(), indexNowKey, 'IndexNow ownership key is missing or invalid');
 for (const favicon of ['/favicon-96x96.png', '/favicon.ico', '/apple-touch-icon.png', '/site.webmanifest']) {
@@ -93,41 +105,36 @@ for (const source of projectSources) {
   galleryCount += renderedGallery;
   projectCount++;
 }
-const flyerId = 'gymboree-reopening-flyer';
-const stickerId = 'geneva-window-sticker';
-const assertAdjacentDesigns = (ids, page) => {
-  const stickerIndex = ids.indexOf(stickerId);
-  const flyerIndex = ids.indexOf(flyerId);
-  assert(stickerIndex >= 0 && flyerIndex === stickerIndex + 1, `${page}: reopening flyer must appear immediately after the newer window sticker`);
-};
-assertAdjacentDesigns([...home.matchAll(/<a class="project-row row-design" href="\/projects\/([^/]+)\//g)].map(match => match[1]), 'All creations');
-const designHtml = await readHtml(resolve(root, 'design/index.html'));
-assertAdjacentDesigns([...designHtml.matchAll(/<article class="collection-card collection-([^"]+)"/g)].map(match => match[1]), 'Design creations');
-const flyerHtml = await readHtml(resolve(root, `projects/${flyerId}/index.html`));
-assert(flyerHtml.includes('9 June 2026'), 'Reopening flyer is missing its completion date');
-assert(flyerHtml.includes('/_astro/gymboree-reopening-flyer-banner.'), 'Reopening flyer is missing its landscape banner');
-assert(/\/_astro\/gymboree-reopening-flyer\.[^"\s]+/.test(flyerHtml), 'Reopening flyer is missing its complete portrait artwork');
-const flyerPostId = '2026-06-09-SSG-Gymboree-Reopening-Flyer';
-const flyerPostUrl = `/${flyerPostId}/`;
 const journalHtml = await readHtml(resolve(root, 'journal/index.html'));
-assert(journalHtml.includes(`href="${flyerPostUrl}"`), 'Reopening flyer journal entry is missing from the journal');
-assert(flyerHtml.includes(`href="${flyerPostUrl}"`), 'Reopening flyer journal entry is not linked from its creation page');
-const flyerPostHtml = await readHtml(resolve(root, flyerPostId, 'index.html'));
-assert(flyerPostHtml.includes('9 June 2026'), 'Reopening flyer journal entry is missing its event date');
-assert(flyerPostHtml.includes('href="/projects/gymboree-reopening-flyer/"'), 'Reopening flyer journal entry is not linked back to its creation');
-const gymboreeWebsiteHtml = await readHtml(resolve(root, 'projects/gymboree-geneva/index.html'));
-assert(gymboreeWebsiteHtml.includes('captured 8 September 2026'), 'Gymboree Geneva is missing the current screenshot date');
-assert(gymboreeWebsiteHtml.includes('/_astro/gymboree-website.'), 'Gymboree Geneva is missing its live responsive screenshot');
+const searchHtml = await readHtml(resolve(root, 'search/index.html'));
+for (const id of movedProjectIds) {
+  for (const html of [home, searchHtml]) assert(!html.includes(`href="/projects/${id}/"`), `Non-game project ${id} still appears as local Games content`);
+  assert(redirects.has(`/projects/${id}/`), `Moved project ${id} needs an explicit redirect`);
+}
+for (const id of movedPostIds) {
+  for (const html of [journalHtml, searchHtml]) assert(!html.includes(`href="/${id}/"`), `Non-game journal entry ${id} still appears locally`);
+  for (const slug of [id, id.toLowerCase()]) {
+    await assert.rejects(stat(resolve(root, slug, 'index.html')), { code: 'ENOENT' }, `Moved journal entry ${slug} must not retain competing local content`);
+    assert(redirects.has(`/${slug}/`), `Moved journal entry ${slug} needs a redirect`);
+  }
+}
+for (const category of ['websites', 'design', 'graphic-design']) await assert.rejects(stat(resolve(root, category, 'index.html')), { code: 'ENOENT' }, `${category} belongs on the parent portfolio`);
+const contactHtml = await readHtml(resolve(root, 'contact/index.html'));
+assert(contactHtml.includes('data-project-brief'), 'Contact must include the project brief workflow');
+assert(/href="mailto:[^"\s]+@[^"\s]+"/.test(contactHtml), 'Contact needs a working direct email alternative');
+for (const field of ['project-type', 'project-scope', 'project-platforms', 'project-timing', 'project-budget']) assert(contactHtml.includes(`id="${field}"`), `Project brief is missing ${field}`);
 for (const name of ['app-ads.txt', 'CNAME']) assert.deepEqual(await readFile(resolve(root, name)), await readFile(name), `${name} changed in output`);
 for (const page of ['aboutme', 'privacypolicy', 'tags']) assert.deepEqual(await readFile(resolve(root, `${page}.html`)), await readFile(resolve(root, `${page}/index.html`)), `${page}.html compatibility alias differs`);
-const posts = (await readdir('_posts')).filter(file => file.endsWith('.md'));
+const posts = await publicGamePosts();
 const feed = await readFile(resolve(root, 'feed.xml'), 'utf8');
 assert.equal((feed.match(/<item>/g) || []).length, posts.length, 'RSS should contain every post');
 for (const post of posts) {
   const id = post.replace(/\.md$/, '');
   for (const slug of new Set([id, id.toLowerCase()])) await stat(resolve(root, slug, 'index.html'));
   assert(feed.includes(`/${id}/`), `${id} missing from RSS`);
+  assert(journalHtml.includes(`href="/${id}/"`), `${id} missing from the game journal`);
 }
+assert.equal((searchHtml.match(/class="search-result"/g) || []).length, gameProjectIds.length + posts.length, 'Search must contain exactly the Games catalogue and retained journal');
 assert((await readHtml(resolve(root,'privacypolicy/index.html'))).includes('request-user-data-deletion'), 'Data deletion section is missing');
 assert((await readFile(resolve(root, 'robots.txt'), 'utf8')).includes('sitemap-index.xml'));
 await stat(resolve(root, 'sitemap-index.xml'));

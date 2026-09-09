@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
 import sharp from 'sharp';
+import { publicGameProjects, publicGamePosts, verifyRedirects, verifyPreservedGameSources } from './site-contract.mjs';
 
 // Exercise the actual inline/client scripts with small, deterministic interface
 // doubles. These tests do not launch a browser or make visual claims.
@@ -51,34 +52,21 @@ test('an unsaved preference follows system changes', () => {
 test('theme remains usable when storage is blocked', () => {
   const t = themeContext({unavailable:true}); t.button.events.click(); assert.equal(t.html.dataset.theme,'dark');
 });
-test('About collage uses the shared grey surface and text colour in both themes', async () => {
+test('Games About identifies the founder, history and connected activities', async () => {
   const about = await readFile('src/pages/aboutme.astro', 'utf8');
-  const css = await readFile('src/styles/portfolio-refresh.css', 'utf8');
-  const site = await readFile('src/styles/site.css', 'utf8');
-  const pages = await readFile('src/styles/pages.css', 'utf8');
-  assert.match(about, /import collage from ['"]\.\.\/assets\/projects\/about-collage-transparent\.png['"]/);
-  assert.match(about, /class="collage-artwork" src=\{collage\}/);
-  assert.doesNotMatch(about, /collage-light|collage-dark/);
-  // Check the style contract, not browser rendering: all panels use --surface,
-  // and the root theme controls both this background and the headline colour.
-  const rules = new Map([...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(([, selector, declarations]) => [selector.replace(/\/\*[\s\S]*?\*\//g, '').trim(), declarations]));
-  assert.match(rules.get('.about-art.about-collage'), /background:var\(--surface\);/);
-  assert.match(rules.get('.about-art.about-collage>span'), /color:var\(--ink\);/);
-  assert.match(pages, /\.journal-image\{[^}]*background:var\(--surface\)/);
-  assert.match(site, /:root\{[^}]*--surface:#f5f5f1;/);
-  assert.match(site, /:root\[data-theme=dark\]\{[^}]*--surface:#1d1d1b;/);
-  assert(![...rules.keys()].some(selector => selector.includes('data-theme') && selector.includes('about-collage')), 'Do not override the shared collage colours for a theme');
+  assert(about.includes('Storm') && about.includes('2017'));
+  assert(about.includes('https://simplyshaped.fr/') && about.includes('https://simplyshapedsites.fr/'));
+  assert(about.includes('SimplyShapedGames') && about.includes('SimplyShapedSites'));
+  assert.doesNotMatch(about, /collage-artwork/, 'The wider parent-portfolio collage must not be passed off as a Games-only showcase');
 });
-test('About collage has real transparency with no opaque lower background', async () => {
-  const file = 'src/assets/projects/about-collage-transparent.png';
-  const metadata = await sharp(file).metadata();
-  assert.equal(metadata.hasAlpha, true);
-  assert.equal(metadata.width, 1122); assert.equal(metadata.height, 1402);
-  const { data, info } = await sharp(file).raw().toBuffer({ resolveWithObject:true });
-  const alpha = (x, y) => data[(y * info.width + x) * info.channels + 3];
-  for (const [x, y] of [[0, 0], [1121, 0], [0, 1401], [1121, 1401], [548, 200], [10, 500]]) assert.equal(alpha(x,y), 0, `Opaque background at ${x},${y}`);
-  for (let y=1050; y<info.height; y++) for (let x=0; x<info.width; x++) assert.equal(alpha(x,y), 0, 'The headline backdrop must be transparent');
+
+test('the split preserves the five public games/mods, six game posts, game policy and advertising file', async () => {
+  assert.equal((await publicGameProjects()).length, 5);
+  assert.equal((await publicGamePosts()).length, 6);
+  await verifyPreservedGameSources();
+  assert.equal((await verifyRedirects()).size, 30);
 });
+
 test('original game stories retain their dates, artwork and Android links without the repeated announcement template', async () => {
   const originals = [
     ['2020-06-16-SSG-Published-Slide', 'slide', 'Slide_'],
@@ -144,4 +132,94 @@ test('search supports bookmarked queries and explicit URL updates', () => {
   s.input.value='Geneva'; let prevented=false; s.form.events.submit({preventDefault(){prevented=true;}});
   assert(prevented); assert.equal(s.getUrl(),'https://simplyshapedgames.fr/search/?q=Geneva');
   s.input.value=''; s.form.events.submit({preventDefault(){}}); assert.equal(s.getUrl(),'https://simplyshapedgames.fr/search/');
+});
+
+const transpileClient = body => ts.transpileModule(body, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
+
+test('work filters show all five projects or the exact games/mods subset with accessible state', async () => {
+  const source = await readFile('src/components/Catalogue.astro', 'utf8');
+  const script = transpileClient(source.match(/<script>([\s\S]*?)<\/script>/)[1]);
+  const controls = element(), status = element();
+  const buttons = ['all', 'games', 'mods'].map(workFilter => ({ ...element(), dataset: { workFilter } }));
+  controls.querySelectorAll = () => buttons;
+  const entries = ['games', 'games', 'games', 'mods', 'mods'].map(workItem => ({ ...element(), hidden: false, dataset: { workItem } }));
+  const groups = ['games', 'mods'].map(workGroup => ({ ...element(), hidden: false, dataset: { workGroup } }));
+  const catalogue = {
+    querySelector: selector => selector === '.work-filters[hidden]' ? controls : status,
+    querySelectorAll: selector => selector === '[data-work-item]' ? entries : groups,
+  };
+  runInNewContext(script, { document: { querySelectorAll: () => [catalogue] } });
+  assert.equal(controls.hidden, false);
+  for (const [filter, expected] of [['mods', 2], ['games', 3], ['all', 5]]) {
+    const clicked = buttons.find(button => button.dataset.workFilter === filter);
+    clicked.events.click();
+    assert.equal(entries.filter(entry => !entry.hidden).length, expected);
+    assert(entries.every(entry => entry.hidden === (filter !== 'all' && entry.dataset.workItem !== filter)));
+    assert(groups.every(group => group.hidden === (filter !== 'all' && group.dataset.workGroup !== filter)));
+    assert.equal(status.textContent, `${expected} projects shown`);
+    assert(buttons.every(button => button.attributes['aria-pressed'] === String(button === clicked)));
+  }
+  assert(source.includes('<noscript>') && source.includes('href="/games/"') && source.includes('href="/mods/"'), 'No-JavaScript category navigation must remain available');
+});
+
+async function briefContext(values = {}, valid = true) {
+  const source = await readFile('src/pages/contact.astro', 'utf8');
+  const script = transpileClient(source.match(/<script>([\s\S]*?)<\/script>/)[1]);
+  const form = element(), mail = { href: 'mailto:stormeckhart@simplyshapedgames.fr' }, status = element(), result = element();
+  const inputs = Object.fromEntries(['project-name', 'project-type', 'project-scope', 'project-platforms', 'project-timing', 'project-budget'].map(id => [id, { value: values[id] || '' }]));
+  form.reportValidity = () => valid;
+  form.querySelector = selector => selector === '[data-brief-email]' ? mail : selector === '[data-brief-status]' ? status : selector === '.draft-result' ? result : inputs[selector.slice(1)];
+  runInNewContext(script, { document: { querySelector: () => form }, encodeURIComponent });
+  return { form, mail, status, result, inputs };
+}
+
+test('project brief prepares an encoded email draft without sending or navigating', async () => {
+  const brief = await briefContext({ 'project-name': 'A&B — prototype?', 'project-type': 'Mods & extensions', 'project-scope': 'Add a mechanic\nKeep existing saves.', 'project-platforms': 'Minecraft', 'project-timing': 'Flexible', 'project-budget': 'Discuss scope' });
+  assert.equal(brief.form.hidden, false);
+  let prevented = false;
+  brief.form.events.submit({ preventDefault() { prevented = true; } });
+  assert(prevented);
+  const draft = new URL(brief.mail.href);
+  assert.equal(draft.protocol, 'mailto:');
+  assert.equal(draft.pathname, 'stormeckhart@simplyshapedgames.fr');
+  assert.equal(draft.searchParams.get('subject'), 'Project enquiry: A&B — prototype?');
+  const body = draft.searchParams.get('body');
+  for (const value of ['Mods & extensions', 'Add a mechanic\nKeep existing saves.', 'Minecraft', 'Flexible', 'Discuss scope']) assert(body.includes(value));
+  assert.equal(brief.result.hidden, false);
+  assert.match(brief.status.textContent, /No message has been sent/);
+});
+
+test('brief validation blocks empty scope and optional fields have honest defaults', async () => {
+  const invalid = await briefContext({}, false);
+  invalid.form.events.submit({ preventDefault() {} });
+  assert.equal(invalid.mail.href, 'mailto:stormeckhart@simplyshapedgames.fr');
+  assert.equal(invalid.result.hidden, true);
+  const minimal = await briefContext({ 'project-type': 'Game development', 'project-scope': 'A small prototype' });
+  minimal.form.events.submit({ preventDefault() {} });
+  const draft = new URL(minimal.mail.href);
+  assert.equal(draft.searchParams.get('subject'), 'Game or mod project enquiry');
+  assert(draft.searchParams.get('body').includes('To be discussed'));
+  assert(!draft.searchParams.get('body').includes('500'));
+});
+
+test('mobile navigation opens and closes through links, Escape and desktop resize', () => {
+  const script = transpileClient([...layout.matchAll(/<script>([\s\S]*?)<\/script>/g)][1][1]);
+  const classList = () => { const values = new Set(); return { add: value => values.add(value), remove: value => values.delete(value), toggle: (value, active) => active ? values.add(value) : values.delete(value), contains: value => values.has(value) }; };
+  const menu = { ...element(), getAttribute(name) { return this.attributes[name]; }, focus() { this.focused = true; } };
+  menu.attributes['aria-expanded'] = 'false';
+  const links = [element(), element()];
+  const nav = { classList: classList(), querySelectorAll: () => links };
+  const root = { classList: classList() }, events = {}, media = element();
+  runInNewContext(script, { document: { documentElement: root, querySelector: selector => selector === '.menu-toggle' ? menu : nav, addEventListener: (name, callback) => { events[name] = callback; } }, matchMedia: () => media });
+  assert.equal(menu.hidden, false);
+  assert(root.classList.contains('navigation-enhanced'));
+  menu.events.click();
+  assert.equal(menu.attributes['aria-expanded'], 'true');
+  assert(nav.classList.contains('is-open'));
+  links[0].events.click();
+  assert.equal(menu.attributes['aria-expanded'], 'false');
+  menu.events.click(); events.keydown({ key: 'Escape' });
+  assert.equal(menu.attributes['aria-expanded'], 'false'); assert(menu.focused);
+  menu.events.click(); media.events.change({ matches: true });
+  assert.equal(menu.attributes['aria-expanded'], 'false'); assert(!nav.classList.contains('is-open'));
 });

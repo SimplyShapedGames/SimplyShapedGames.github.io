@@ -5,4 +5,21 @@ const policy = await getEntry('pages', 'privacypolicy');
 if (!policy) throw new Error('The original privacy policy is missing.');
 const { Content } = await render(policy);
 ---
-<SiteLayout title="Privacy Policy" active="privacy" description="SimplyShapedGames privacy policy and data deletion contact."><article class="page-shell policy-page"><header class="page-heading"><p class="eyebrow">SimplyShapedGames</p><h1>Privacy policy<span class="blue-text">.</span></h1></header><div class="prose policy-content"><Content /></div></article></SiteLayout>
+<SiteLayout title="Privacy Policy" active="privacy" description="SimplyShapedGames website privacy, the original mobile-game policy and data deletion contact.">
+  <article class="page-shell policy-page">
+    <header class="page-heading"><p class="eyebrow">SimplyShapedGames</p><h1>Privacy policy<span class="blue-text">.</span></h1></header>
+    <div class="prose policy-content">
+      <section aria-labelledby="website-privacy-heading">
+        <h2 id="website-privacy-heading">This website</h2>
+        <p>The SimplyShapedGames services website is hosted and delivered by Cloudflare. To deliver and secure the pages, Cloudflare may process technical request information such as your IP address, request date and time, requested URL and routing data. Its processing and international transfers are described in <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>. GitHub maintains the website source; it is not the public host for this version.</p>
+        <p>You can browse without an account. This website has no advertising or audience-measurement tool. Search and the optional project brief builder run in your browser. Your light/dark theme preference is saved in local storage. The site serves its own images and fonts.</p>
+        <p>The brief builder only prepares an email draft. It does not submit the form to a server, send an email or store the brief with SimplyShapedGames. You choose whether to open the draft, review it and send it using your own email application. If you write to Storm, he receives the information you choose to send so he can answer your enquiry. For website privacy questions, email <a href="mailto:stormeckhart@simplyshapedgames.fr">stormeckhart@simplyshapedgames.fr</a>. External project, store and social links have their own privacy policies.</p>
+      </section>
+      <section aria-labelledby="mobile-game-policy-heading">
+        <h2 id="mobile-game-policy-heading">SimplyShapedGames mobile-game policy</h2>
+        <p>The original game-service policy follows unchanged. It applies to the mobile games, separately from the services website described above.</p>
+        <Content />
+      </section>
+    </div>
+  </article>
+</SiteLayout>

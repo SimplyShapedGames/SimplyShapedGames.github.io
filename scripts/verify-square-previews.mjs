@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import sharp from 'sharp';
+import { gameProjectIds } from './site-contract.mjs';
 
 const root = resolve('dist');
 const files = (await readdir(root, { recursive: true })).filter(file => file.endsWith('.html'));
@@ -28,16 +29,11 @@ for (const src of assets) {
   const metadata = await sharp(resolve(root, '.' + src)).metadata();
   assert.equal(metadata.width, metadata.height, `${src}: responsive image is not square`);
 }
-for (const page of ['journal/index.html', 'websites/index.html']) {
+const home = await readFile(resolve(root, 'index.html'), 'utf8');
+assert.equal((home.match(/\bdata-work-item="(?:games|mods)"/g) || []).length, gameProjectIds.length, 'Every approved game/mod must appear in the home showcase');
+assert.equal((home.match(/<img\b[^>]*\bclass="[^"]*\bsquare-preview\b/g) || []).length, gameProjectIds.length, 'Each home game/mod needs its own intact square preview');
+for (const page of ['index.html', 'journal/index.html', 'games/index.html', 'mods/index.html']) {
   const html = await readFile(resolve(root, page), 'utf8');
-  for (const website of ['gymboree', 'ssg']) assert(html.includes(`${website}-website-square.`), `${page}: missing square ${website} screenshot`);
+  assert(!/gymboree-website-square\.|ssg-website-square\.|gymboree-reopening-flyer-square\./.test(html), `${page}: non-game artwork leaked into the Games catalogue`);
 }
-for (const page of ['index.html', 'design/index.html', 'projects/geneva-window-sticker/index.html']) {
-  const html = await readFile(resolve(root, page), 'utf8');
-  assert(html.includes('gymboree-reopening-flyer-square.'), `${page}: missing dedicated square reopening flyer preview`);
-}
-const journal = await readFile(resolve(root, 'journal/index.html'), 'utf8');
-assert(journal.includes('gymboree-reopening-flyer-square.'), 'journal/index.html: missing dedicated square reopening flyer preview');
-const flyerPost = await readFile(resolve(root, '2026-06-09-SSG-Gymboree-Reopening-Flyer/index.html'), 'utf8');
-assert(flyerPost.includes('gymboree-reopening-flyer-banner.'), 'Reopening flyer journal entry is missing its landscape article artwork');
-console.log(`Square previews verified: ${previews} image slots and ${assets.size} responsive assets, including both website screenshots.`);
+console.log(`Square previews verified: ${previews} image slots and ${assets.size} responsive assets across the Games site.`);

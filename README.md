@@ -1,8 +1,8 @@
-# SimplyShapedGames portfolio
+# SimplyShapedGames — game development and mods
 
-The current website is built with **Astro** for **GitHub Pages**. It showcases games, mods, websites and design work, alongside the existing journal. Use `pnpm dev` for development and `pnpm build` for the checked static output.
+This staged website is built with **Astro** for static **Cloudflare Pages** hosting at `simplyshapedgames.fr`. It presents game-development services with project-specific quotes, five released games/mods and six retained journal posts. The wider portfolio belongs to SimplyShaped; website services belong to SimplyShapedSites. Use `pnpm dev` for development and `pnpm build` for the checked static output.
 
-See [the website guide](docs/WEBSITE.md) for setup, editing content, validation and the opt-in publication process. Project descriptions are in `src/content/projects/`; posts remain in `_posts/`.
+See [the Games split notes](docs/GAMES-SITE-SPLIT.md) for content boundaries, [the website guide](docs/WEBSITE.md) for validation and [the Cloudflare Pages guide](docs/CLOUDFLARE-PAGES.md) for safe manual upload/cutover. The workflow checks and packages only; it cannot deploy. Project descriptions are in `src/content/projects/`; retained posts are selected by the Games catalogue contract.
 
 The original theme documentation below is retained as migration reference, not as the setup instructions for the new site.
 

@@ -1,49 +1,60 @@
 ---
-import { allProjects, allPosts, categories, postUrl, postDate, formatDate, type Category } from '../lib/catalogue';
-import ProjectCard from './ProjectCard.astro';
-import ProjectRow from './ProjectRow.astro';
-import CollectionCard from './CollectionCard.astro';
-interface Props { category?: Category; }
-const { category = 'all' } = Astro.props;
-const projects = await allProjects();
-const selected = projects.filter(p => category === 'all' || p.data.category === category);
-const featured = selected.filter(p => p.data.featured);
-const remaining = selected.filter(p => !p.data.featured);
-const groups = [
-  { title: 'More games', items: remaining.filter(p => p.data.category === 'games' && p.data.status !== 'In development') },
-  { title: 'Game mods', items: remaining.filter(p => p.data.category === 'mods' && p.data.status !== 'In development') },
-  { title: 'Web work', items: remaining.filter(p => p.data.category === 'websites') },
-  { title: 'Beyond the screen', items: remaining.filter(p => p.data.category === 'design') },
-].filter(group => group.items.length);
-const titles = { all: 'Creations', games: 'Games', mods: 'Mods', websites: 'Websites', design: 'Design' };
-const descriptions = {
-  all: 'Games, mods, websites and a few things in between.',
-  games: 'Small ideas. Whole worlds of play.',
-  mods: 'New ways to play familiar worlds.',
-  websites: 'Websites, from the first layout to the finishing details.',
-  design: 'A little creativity beyond the screen.',
-};
-const posts = category === 'all' ? (await allPosts()).slice(0, 3) : [];
+import { allProjects, type Category } from '../lib/catalogue';
+import { projectArtwork } from '../lib/art';
+import SquarePreview from './SquarePreview.astro';
+import Arrow from './Arrow.astro';
+interface Props { category?: Category; standalone?: boolean; }
+const { category = 'all', standalone = false } = Astro.props;
+const projects = (await allProjects()).filter(p => category === 'all' || p.data.category === category);
+const games = projects.filter(p => p.data.category === 'games');
+const mods = projects.filter(p => p.data.category === 'mods');
+const heading = category === 'games' ? 'Games to play.' : category === 'mods' ? 'Worlds to change.' : 'Games to play. Worlds to change.';
+const Heading = standalone ? 'h1' : 'h2';
 ---
-<section class="catalogue-shell" aria-labelledby="creations-title">
-  <div class="catalogue-intro">
-    <p class="eyebrow">The SimplyShapedGames collection</p>
-    <div class="title-shapes"><span class="shape-circle" aria-hidden="true"></span><span class="shape-square" aria-hidden="true"></span><h1 id="creations-title">{titles[category]}<span>.</span></h1></div>
-    <p class="intro-copy">{descriptions[category]}<br/><span class="quiet">A collection that keeps taking shape.</span></p>
-    <nav class="category-nav" aria-label="Creation categories">
-      {categories.map(item => <a href={item.href} aria-current={category === item.id ? 'page' : undefined}>{item.title}<sup>{item.id === 'all' ? projects.length : projects.filter(p => p.data.category === item.id).length}</sup></a>)}
-    </nav>
-    <div class="intro-note"><span class="little-spark" aria-hidden="true">✳</span><p>Made independently.<br/>Made to be explored.</p></div>
-  </div>
-  <div class="catalogue-content">
-    {featured.length > 0 && <div class="project-grid" aria-label="Published games">{featured.map((project, index) => <ProjectCard project={project} index={index} />)}</div>}
-    {groups.map(group => <section class="catalogue-group" aria-label={group.title}>
-      <div class="browse-more"><h2>{group.title}</h2><span class="short-rule"></span><span class="group-count">{String(group.items.length).padStart(2,'0')}</span></div>
-      {category === 'all' ? group.items.map(project => <ProjectRow project={project} />) : <div class="collection-grid">{group.items.map(project => <CollectionCard project={project} />)}</div>}
-    </section>)}
-    {posts.length > 0 && <section class="journal-peek" aria-labelledby="journal-peek-title">
-      <div class="section-heading"><h2 id="journal-peek-title">From the journal<span>.</span></h2><a class="text-link" href="/journal/">All posts <span aria-hidden="true">↗</span></a></div>
-      {posts.map(post => <a class="journal-line" href={postUrl(post.id)}><time datetime={postDate(post.id).toISOString()}>{formatDate(postDate(post.id))}</time><span>{post.data.title}</span><span aria-hidden="true">↗</span></a>)}
-    </section>}
-  </div>
+<section class:list={['work-section', 'service-container', { 'standalone-work': standalone }]} id="games-mods" aria-labelledby="work-title" data-work-catalogue>
+  <Heading id="work-title">{heading}</Heading>
+  {category === 'all' ? <>
+    <div class="work-filters" role="group" aria-label="Filter games and mods" hidden>
+      <button type="button" data-work-filter="all" aria-pressed="true">All</button>
+      <button type="button" data-work-filter="games" aria-pressed="false">Games</button>
+      <button type="button" data-work-filter="mods" aria-pressed="false">Mods</button>
+    </div>
+    <noscript><nav class="work-filters" aria-label="Games and mods"><a href="/#games-mods" aria-current="page">All</a><a href="/games/">Games</a><a href="/mods/">Mods</a></nav></noscript>
+  </> : <nav class="work-filters" aria-label="Games and mods"><a href="/#games-mods">All</a><a href="/games/" aria-current={category === 'games' ? 'page' : undefined}>Games</a><a href="/mods/" aria-current={category === 'mods' ? 'page' : undefined}>Mods</a></nav>}
+  <p class="visually-hidden" data-work-count role="status" aria-live="polite">{projects.length} projects shown</p>
+  {games.length > 0 && <div class="work-games" data-work-group="games">{games.map(project => {
+    const art = projectArtwork(project.data, 1);
+    if (!art || art.width !== art.height) throw new Error(`${project.id} needs a square catalogue icon`);
+    return <a class="work-game" href={`/projects/${project.id}/`} data-work-item="games">
+      <div class="work-game-art"><SquarePreview src={art} alt={`${project.data.title} icon`} sizes="(max-width: 640px) 88vw, (max-width: 900px) 42vw, 28vw" /></div>
+      <div class="work-card-title"><h3>{project.data.title}</h3><Arrow /></div><p>Android game</p>
+    </a>;
+  })}</div>}
+  {mods.length > 0 && <div class="work-mods" data-work-group="mods">{mods.map(project => {
+    const art = projectArtwork(project.data, 1);
+    if (!art || art.width !== art.height) throw new Error(`${project.id} needs a square catalogue icon`);
+    return <a class="work-mod" href={`/projects/${project.id}/`} data-work-item="mods">
+      <div class="work-mod-art"><SquarePreview src={art} alt={`${project.data.title} icon`} widths={[160, 320]} sizes="(max-width: 640px) 64px, 88px" /></div>
+      <div><h3>{project.data.title}</h3><p>{project.id === 'copycat-expansion' ? 'Minecraft mod' : 'Left 4 Dead 2 sound mod'}</p></div><Arrow />
+    </a>;
+  })}</div>}
 </section>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-work-catalogue]').forEach(catalogue => {
+    const controls = catalogue.querySelector<HTMLElement>('.work-filters[hidden]');
+    if (!controls) return;
+    const buttons = [...controls.querySelectorAll<HTMLButtonElement>('[data-work-filter]')];
+    const entries = [...catalogue.querySelectorAll<HTMLElement>('[data-work-item]')];
+    const groups = [...catalogue.querySelectorAll<HTMLElement>('[data-work-group]')];
+    const status = catalogue.querySelector<HTMLElement>('[data-work-count]');
+    controls.hidden = false;
+    buttons.forEach(button => button.addEventListener('click', () => {
+      const filter = button.dataset.workFilter;
+      let count = 0;
+      entries.forEach(entry => { entry.hidden = filter !== 'all' && entry.dataset.workItem !== filter; if (!entry.hidden) count++; });
+      groups.forEach(group => { group.hidden = filter !== 'all' && group.dataset.workGroup !== filter; });
+      buttons.forEach(control => control.setAttribute('aria-pressed', String(control === button)));
+      if (status) status.textContent = `${count} ${count === 1 ? 'project' : 'projects'} shown`;
+    }));
+  });
+</script>

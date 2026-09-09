@@ -1,18 +1,12 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import { Image } from 'astro:assets';
-import collage from '../assets/projects/about-collage-transparent.png';
-const collageDescription = "A geometric collage inspired by SimplyShapedGames' released games, mods and completed Geneva design work";
+import Arrow from '../components/Arrow.astro';
 ---
-<SiteLayout title="About" active="about" description="Meet Storm Eckhart, the independent developer behind SimplyShapedGames.">
-  <div class="page-shell about-page">
-    <header class="page-heading"><p class="eyebrow">Independent since 2017</p><h1>Hi, I'm Storm<span class="blue-text">.</span></h1><p>The person behind SimplyShapedGames.</p></header>
-    <div class="about-layout">
-      <div class="about-art about-collage">
-        <Image class="collage-artwork" src={collage} alt={collageDescription} widths={[450, 750, 1122]} sizes="(max-width: 560px) 90vw, 40vw" format="webp" loading="eager" />
-        <span>One person.<br/>Many shapes.</span>
-      </div>
-      <div class="prose"><h2>It started with games.</h2><p>I'm Storm Eckhart, the owner and developer behind SimplyShapedGames. I started it in 2017 to give my ideas a home — and to push myself to turn them into finished games.</p><p>Since then, I've published Slide, PiecePerfect and ShapeDash. Along the way, the collection has grown to include game mods, websites and design work.</p><p>This site brings that released and completed work together, with a space for each creation and the details behind it.</p><p><a class="text-link" href="/">Explore the collection ↗</a></p><h2>Something in mind?</h2><p>For questions about a project or a conversation about web work, <a href="/contact/">get in touch</a>.</p></div>
+<SiteLayout title="About Storm & SimplyShapedGames" active="about" description="Storm Eckhart started SimplyShapedGames in 2017. Today, it is the game and mod development activity within SimplyShaped, alongside SimplyShapedSites.">
+  <article class="service-container story-page">
+    <header class="service-page-heading"><h1>Hi, I'm Storm.</h1><p>The independent developer behind SimplyShapedGames.</p></header>
+    <div class="story-layout"><div class="story-lead"><h2>It started<br />with games.</h2><p>Small ideas, finished games and new ways to play.</p><a class="service-text-link" href="/#games-mods">Explore games &amp; mods <Arrow /></a></div>
+      <div class="prose"><p>I'm Storm Eckhart. I started SimplyShapedGames in 2017 to give my ideas a home and push myself to turn them into finished games.</p><p>Since then, I've published <a href="/projects/slide/">Slide</a>, <a href="/projects/pieceperfect/">PiecePerfect</a> and <a href="/projects/shapedash/">ShapeDash</a>. My work also includes game mods: <a href="/projects/copycat-expansion/">Create: Copycat Expansion</a> for Minecraft and <a href="/projects/the-witch-who-laughs/">The Witch Who Laughs</a> for Left 4 Dead 2.</p><h2>One person. Three connected names.</h2><p><a href="https://simplyshaped.fr/">SimplyShaped</a> is the home for my wider creative work: games, mods, websites and design. It brings the full portfolio and its story together.</p><p><strong>SimplyShapedGames</strong> is where I focus on games and mods: projects to play, extensions to existing worlds, and development work for people with something they want to build.</p><p><a href="https://simplyshapedsites.fr/">SimplyShapedSites</a> is my dedicated website design and development activity. If you need a website rather than a game, that's the place to start.</p><h2>Work shaped around the project.</h2><p>A prototype, a specific bug and a complete small game call for different kinds of work. We can discuss what you have, what you want to make and what fits your priorities. The scope, milestones and quote come before development starts.</p><p><a class="service-text-link" href="/contact/">Discuss your project <Arrow /></a></p></div>
     </div>
-  </div>
+  </article>
 </SiteLayout>

@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
+import { mergePagesRedirects } from './cloudflare-pages.mjs';
 import { privateProjectIds } from './verify-privacy.mjs';
+import { movedProjectIds, movedPostIds, publicGameProjects, publicGamePosts, homeCatalogueCounts, verifyRedirects, verifyPreservedGameSources } from './site-contract.mjs';
 
 // Check the running server, not dist/: a successful build can coexist with a
 // stale dev process that returns HTTP 200 and an entirely empty content store.
@@ -24,23 +26,15 @@ async function page(path) {
   return html;
 }
 
-const projects = [];
-for (const file of (await readdir('src/content/projects')).filter(file => file.endsWith('.md'))) {
-  const source = await readFile(`src/content/projects/${file}`, 'utf8');
-  if (/^published: false$|^status: In development$/m.test(source)) continue;
-  projects.push({
-    id: file.replace(/\.md$/, ''),
-    category: source.match(/^category: (.+)$/m)?.[1].trim(),
-    status: source.match(/^status: (.+)$/m)?.[1].trim(),
-    gallery: (source.match(/^  - image: /gm) || []).length,
-  });
-}
-assert(projects.length > 0, 'No source projects found');
-const categories = ['games', 'mods', 'websites', 'design'];
+const projects = await publicGameProjects();
+const categories = ['games', 'mods'];
 const expectedCounts = [projects.length, ...categories.map(category => projects.filter(p => p.category === category).length)];
 const home = await page('/');
-const actualCounts = [...home.matchAll(/<sup>(\d+)<\/sup>/g)].map(match => Number(match[1]));
+const actualCounts = homeCatalogueCounts(home);
 assert.deepEqual(actualCounts, expectedCounts, 'Live category counts do not match the catalogue. Fully stop and restart the dev process if content collections were added after startup.');
+assert.deepEqual(expectedCounts, [5, 3, 2]);
+assert(home.includes('id="games-mods"') && home.includes('id="services"'), 'Live home is missing showcase/services destinations');
+assert(!/(?:€\s*500|500\s*€)/.test(home), 'Games pricing must be scoped to client needs, not a fixed Sites package');
 for (const [path, expectedType] of [
   ['/favicon-96x96.png', /^image\/png/],
   ['/favicon.ico', /^image\/(?:x-icon|vnd\.microsoft\.icon)/],
@@ -74,7 +68,7 @@ for (const project of projects) {
 
 const journal = await page('/journal/');
 const search = await page('/search/');
-const posts = (await readdir('_posts')).filter(file => file.endsWith('.md'));
+const posts = await publicGamePosts();
 const journalDates = [...journal.matchAll(/<time datetime="([^"]+)"/g)].map(match => match[1].slice(0, 10));
 assert.deepEqual(journalDates, posts.map(file => file.slice(0, 10)).sort().reverse(), 'Journal is not in newest-first date order');
 assert.equal((search.match(/class="search-result"/g) || []).length, projects.length + posts.length, 'Live search index is incomplete');
@@ -89,9 +83,21 @@ for (const post of posts) {
 }
 assert((await page('/privacypolicy/')).includes('request-user-data-deletion'), 'Live privacy content is missing');
 const about = await page('/aboutme/');
-assert(about.includes('about-collage'), 'About collage is missing');
-assert(about.includes('class="collage-artwork"'), 'Theme-independent About collage is missing');
-assert(about.includes('One person.') && about.includes('Many shapes.'), 'About headline is missing');
+assert(about.includes('Storm') && about.includes('2017'), 'Games About story must identify its independent founder and history');
+for (const name of ['SimplyShapedGames', 'SimplyShapedSites', 'SimplyShaped']) assert(about.includes(name), `About must explain ${name}`);
+const contact = await page('/contact/');
+assert(contact.includes('data-project-brief') && /href="mailto:[^"\s]+@[^"\s]+"/.test(contact), 'Live contact must have a brief workflow and direct email alternative');
+for (const id of movedProjectIds) assert(!home.includes(`href="/projects/${id}/"`) && !search.includes(`href="/projects/${id}/"`), `Moved project ${id} is still discoverable on Games`);
+for (const id of movedPostIds) assert(!journal.includes(`href="/${id}/"`) && !search.includes(`href="/${id}/"`), `Moved journal entry ${id} is still discoverable on Games`);
+// _redirects is host configuration, not a public page: Astro preview hides it.
+// Verify the exact packaged rules, without claiming local Astro executes them.
+await verifyRedirects();
+assert.equal(
+  await readFile('dist/_redirects', 'utf8'),
+  mergePagesRedirects(await readFile('public/_redirects', 'utf8'), posts),
+  'Cloudflare preview package must retain all 30 migrations and the exact 12 game-journal case aliases',
+);
+await verifyPreservedGameSources();
 for (const id of await privateProjectIds()) {
   assert(!home.includes(id) && !search.includes(id), 'A private project is still discoverable');
   const response = await fetch(new URL(`/projects/${id}/`, origin), { signal: AbortSignal.timeout(15000), redirect: 'error' });
@@ -115,4 +121,4 @@ async function checkImages() {
 }
 await Promise.all(Array.from({ length: 3 }, checkImages));
 console.log(`Live preview verified: ${projects.length} projects, category counts ${expectedCounts.join('/')}, ${galleries} gallery images, ${posts.length} posts, ${pages} pages and ${images.size} image responses.`);
-console.log('Checks server-rendered content, search entries, RSS and image responses; does not verify browser rendering or external websites.');
+console.log('Checks server-rendered content, search, RSS, images and redirect packaging. Does not verify browser rendering, external sites or execution of Cloudflare edge redirects.');

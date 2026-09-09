@@ -1,6 +1,8 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import { cp, mkdir } from 'node:fs/promises';
+import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mergePagesRedirects } from './scripts/cloudflare-pages.mjs';
+import { publicGamePosts, verifyRedirects } from './scripts/site-contract.mjs';
 
 // Keep the legacy URLs for advertising verification and shared article images.
 function preservePublicFiles() {
@@ -26,6 +28,11 @@ function preservePublicFiles() {
         for (const page of ['aboutme', 'privacypolicy', 'tags']) {
           await cp(new URL(`${page}/index.html`, dir), new URL(`${page}.html`, dir));
         }
+        // Preserve all 30 scoped non-game migrations, then add local aliases
+        // for retained journal routes that differ only by case on Windows.
+        await verifyRedirects();
+        const migrations = await readFile(new URL('./public/_redirects', import.meta.url), 'utf8');
+        await writeFile(new URL('_redirects', dir), mergePagesRedirects(migrations, await publicGamePosts()));
       }
     }
   };

@@ -1,7 +1,29 @@
 ---
+import { Image } from 'astro:assets';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Catalogue from '../components/Catalogue.astro';
+import Arrow from '../components/Arrow.astro';
+import banner from '../assets/projects/shapedash-banner.png';
+const services = [
+  { title: 'Game development', description: 'Prototypes, gameplay systems and complete small games, built around the experience you want to create.' },
+  { title: 'Mods & extensions', description: 'Minecraft and Source projects, custom mechanics and compatibility work that build on existing games.' },
+  { title: 'Existing-project support', description: 'Debugging, UI, optimisation and release preparation when your project needs another pair of hands.' },
+];
+const steps = [
+  { title: 'Brief', description: 'Share the idea, what exists already and what you need help with.' },
+  { title: 'Scope & quote', description: 'Agree the work, priorities, milestones and budget together.' },
+  { title: 'Build & review', description: 'Review playable progress and refine the agreed work.' },
+];
 ---
-<SiteLayout>
+<SiteLayout title="Independent game development & mods" active="home" description="Independent game development, mods and hands-on project support by Storm Eckhart. Explore released games and mods, or discuss a quote shaped around your project.">
+  <section class="service-hero service-container" aria-labelledby="hero-title">
+    <div class="hero-copy"><h1 id="hero-title">From your next idea to something playable.</h1><p class="hero-description">Independent game development, mods and hands-on support. I help turn a clear brief into a build you can play.</p>
+      <div class="service-actions"><a class="service-button" href="/contact/">Discuss your project</a><a class="service-text-link" href="/#games-mods">Explore games & mods <Arrow /></a></div>
+      <p class="quote-note">A quote shaped around your scope, platforms and priorities.</p>
+    </div>
+    <figure class="hero-media"><Image src={banner} alt="ShapeDash: a blue runner stretching through colourful shaped obstacles" widths={[640, 1000, 1400, 1794]} sizes="(max-width: 900px) 90vw, 47vw" format="webp" loading="eager" fetchpriority="high" /><figcaption><a href="/projects/shapedash/">ShapeDash</a><span>Unity · Android</span></figcaption></figure>
+  </section>
+  <section class="services-section service-container" id="services" aria-labelledby="services-title"><h2 id="services-title">Build the part your<br class="desktop-break" /> project needs.</h2><div class="service-accent-line" aria-hidden="true"></div><div class="service-rows">{services.map(service => <div class="service-row"><h3>{service.title}</h3><p>{service.description}</p></div>)}</div></section>
   <Catalogue />
+  <section class="quote-section service-container" id="project-quote" aria-labelledby="quote-title"><h2 id="quote-title">Tell me what you want to make.</h2><p class="quote-introduction">A focused fix and a full game are different projects. We’ll define the scope, milestones and budget before work starts.</p><ol class="process-steps">{steps.map((step, index) => <li><span class="step-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><h3>{step.title}</h3><p>{step.description}</p></li>)}</ol><div class="service-actions"><a class="service-button" href="/contact/">Start a conversation</a><a class="service-text-link contact-address" href="mailto:stormeckhart@simplyshapedgames.fr">stormeckhart@simplyshapedgames.fr</a></div></section>
 </SiteLayout>

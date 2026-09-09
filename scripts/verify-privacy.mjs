@@ -3,6 +3,7 @@ import { resolve, basename, extname } from 'node:path';
 import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
 import sharp from 'sharp';
+const privateRoot = process.env.SS_PRIVATE_REFERENCE_ROOT || '.private';
 
 async function optionalFiles(directory) {
   try {
@@ -10,17 +11,17 @@ async function optionalFiles(directory) {
   } catch (error) { if (error.code === 'ENOENT') return []; throw error; }
 }
 export async function privateProjectIds() {
-  return (await optionalFiles('.private/projects')).filter(file => file.endsWith('.md')).map(file => basename(file, '.md'));
+  return (await optionalFiles(resolve(privateRoot, 'projects'))).filter(file => file.endsWith('.md')).map(file => basename(file, '.md'));
 }
 export async function verifyPrivacy() {
-  const hiddenSources = (await optionalFiles('.private/projects')).filter(file => file.endsWith('.md'));
+  const hiddenSources = (await optionalFiles(resolve(privateRoot, 'projects'))).filter(file => file.endsWith('.md'));
   const privateTerms = new Set(await privateProjectIds());
   for (const file of hiddenSources) {
     const source = await readFile(file, 'utf8');
     const title = source.match(/^title: (.+)$/m)?.[1].trim().replace(/^['"]|['"]$/g, '');
     if (title) privateTerms.add(title.toLowerCase());
   }
-  const privateAssets = (await optionalFiles('.private/art')).map(file => basename(file, extname(file)).toLowerCase());
+  const privateAssets = (await optionalFiles(resolve(privateRoot, 'art'))).map(file => basename(file, extname(file)).toLowerCase());
   const outputFiles = await optionalFiles('dist');
   assert(outputFiles.length > 0, 'Build output is missing');
   for (const file of outputFiles) {
