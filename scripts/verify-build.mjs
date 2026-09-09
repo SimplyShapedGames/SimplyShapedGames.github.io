@@ -45,6 +45,8 @@ for (const file of htmlFiles) {
 // Every published Markdown record must have a page and be reachable from its category.
 const projectSources = (await readdir('src/content/projects')).filter(file => file.endsWith('.md'));
 const home = await readHtml(resolve(root, 'index.html'));
+const indexNowKey = '895587a45b4a41d2a0b4f8e2c126ffcc';
+assert.equal((await readFile(resolve(root, `${indexNowKey}.txt`), 'utf8')).trim(), indexNowKey, 'IndexNow ownership key is missing or invalid');
 for (const favicon of ['/favicon-96x96.png', '/favicon.ico', '/apple-touch-icon.png', '/site.webmanifest']) {
   assert(home.includes(`href="${favicon}"`), `Home page is missing ${favicon}`);
 }
