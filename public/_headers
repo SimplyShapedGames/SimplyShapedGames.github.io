@@ -5,6 +5,27 @@
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
+# Match SSS's explicit browser revalidation for navigation/root files.
+# Add Astro's trailing-slash and nested project/index.html forms.
+# Fingerprinted /_astro/* and nested artwork keep Pages' default caching.
+/
+  Cache-Control: no-cache, must-revalidate
+
+/:page
+  Cache-Control: no-cache, must-revalidate
+
+/:page/
+  Cache-Control: no-cache, must-revalidate
+
+/projects/:project
+  Cache-Control: no-cache, must-revalidate
+
+/projects/:project/
+  Cache-Control: no-cache, must-revalidate
+
+/*/index.html
+  Cache-Control: no-cache, must-revalidate
+
 # Project-neutral patterns also cover hashed and branch preview addresses.
 # These rules do not match simplyshapedgames.fr; the custom domain stays indexable.
 https://:project.pages.dev/*

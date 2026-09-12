@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { assertPublishablePath, collectPagesFiles, createPostRedirects, limits, mergePagesRedirects, packagePages, verifyPagesHosting } from './cloudflare-pages.mjs';
 import { keptPostIds, publicGamePosts, verifyPreservedGameSources, verifyRedirects } from './site-contract.mjs';
 
-const sourceHeaders = await readFile('public/_headers', 'utf8');
+const sourceHeaders = (await readFile('public/_headers', 'utf8')).replaceAll('\r\n', '\n');
 const baseFiles = {
   'index.html': '<title>SimplyShapedGames</title><link rel="canonical" href="https://simplyshapedgames.fr/">',
   '404.html': '<h1>A missing piece</h1><p>Page not found</p>',
@@ -49,6 +49,29 @@ test('Pages headers cover production previews and branch previews without noinde
   const result = verifyPagesHosting(records());
   assert.equal(result.fileCount, Object.keys(baseFiles).length);
   verifyPagesHosting(records({ '_headers': sourceHeaders.replaceAll('\n', '\r\n') }));
+});
+
+test('navigation revalidates while fingerprinted and nested artwork keep default caching', () => {
+  const rules = ['/', '/:page', '/:page/', '/projects/:project', '/projects/:project/', '/*/index.html'];
+  const matches = (rule, path) => new RegExp('^' + rule
+    .replace(/[.+?^$()|[\]{}\\]/g, '\\$&')
+    .replace(/:[A-Za-z]\w*/g, '[^/]+')
+    .replace(/\*/g, '.*') + '$').test(path);
+  const count = path => rules.filter(rule => matches(rule, path)).length;
+  for (const path of ['/', '/index.html', '/aboutme', '/aboutme/', '/aboutme.html',
+    '/aboutme/index.html', '/games/', '/journal/', '/2026-09-01-SSG-Copycat-Expansion/',
+    '/projects/pieceperfect', '/projects/pieceperfect/', '/projects/pieceperfect/index.html']) {
+    assert.equal(count(path), 1, 'Exactly one navigation cache rule for ' + path);
+  }
+  for (const path of ['/_astro/site.ab123.css', '/_astro/logo.xy123.webp', '/assets/img/art.png', '/brand/mark.svg']) {
+    assert.equal(count(path), 0, 'Do not change nested asset caching: ' + path);
+  }
+  for (const rule of rules) {
+    const changed = sourceHeaders.replace(rule + '\n  Cache-Control: no-cache, must-revalidate', rule + '\n  Cache-Control: public, max-age=3600');
+    assert.throws(() => verifyPagesHosting(records({ '_headers': changed })), /Missing browser revalidation/);
+  }
+  assert.throws(() => verifyPagesHosting(records({ '_headers': sourceHeaders.replace('/*\n', '/*\n  Cache-Control: no-cache\n') })), /hashed asset caching globally/);
+  assert.throws(() => verifyPagesHosting(records({ '_headers': sourceHeaders + '\n/_astro/*\n  Cache-Control: no-cache\n' })), /cache overrides limited/);
 });
 
 test('case-only journal URLs redirect to the canonical route on every build platform', () => {

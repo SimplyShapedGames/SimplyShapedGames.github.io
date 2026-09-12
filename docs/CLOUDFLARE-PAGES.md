@@ -2,9 +2,22 @@
 
 This is an implementation/checklist, not a deployment receipt. No command below changes an account, DNS record or production website unless the separate manual upload/cutover is explicitly performed.
 
+## Verified local checkpoint — 12 September 2026
+
+- Prepared source before the cache-parity change: `d68acb691a0181239e12b4ab39f4fc5513f2e444`, authored with the Games identity. The source was not pushed and the new site was not published at that checkpoint.
+- Preserved pre-cache package: `validation/cloudflare-pages/release-dB48Ub/site/`, 150 files / 37,870,591 bytes; adjacent manifest SHA-256 `1db84d0473de1adbde15f1c9797419ffb1fdccc10caeefa2b4602967b9882dd1`.
+- The original public Games portfolio remains the rollback/live source until the new Games deployment is checked and its cutover is completed. Building a candidate is not publication.
+- The parent portfolio is verified on `https://simplyshaped.pages.dev/` at deployment `6ad7997e`, with its final approved family logo. The parent domain was purchased; its custom-domain/DNS cutover remained pending in the authoritative private `DOMAIN-HANDOFF.md`. Consult that handoff for subsequent external progress.
+
 ## Intended provider mapping
 
+The checked 12 September cache-parity candidate is `validation/cloudflare-pages/release-RR5Xe4/site/`, with 150 files / 37,871,136 bytes and adjacent manifest SHA-256 `70208e24c8d77ede77297ffd89c6fa2e73796b0e3ee6fb17888ec9ffc0d5d928`. Every packaged file was independently rehashed. A complete comparison with `release-dB48Ub` proves **only `_headers` changed**; approved HTML, styles, fonts, artwork, redirects and public metadata remain byte-identical.
+
+Validation passed: 32 unit tests, zero Astro diagnostics, static build and public-link checks, and the explicit private-reference audit (5 private projects / 165 private artwork names). All 63 actual HTML request forms match exactly one cache rule; all 90 fingerprinted assets retain default caching. This is not a new browser sign-off or live deployment claim. Verify actual Cloudflare headers after upload.
+
 Match the related SimplyShapedSites task's confirmed setup: **manual Cloudflare Pages Direct Upload**, Squarespace registrar, Cloudflare authoritative DNS, and GitHub as source storage rather than the public host. SSS uses the Pages project `simplyshapedsites`, no Git connection/automatic workflow, and both apex/www custom domains with HTTPS, apex canonical and no www redirect. Its latest handoff superseded the earlier parked-domain response; verify current live state again before copying account settings.
+
+Current SSS source is clean at `21828a41`. A public check on 12 September at 21:03 UTC confirmed apex and www HTTPS responses, the four shared security headers, explicit navigation revalidation (`Cache-Control: no-cache, must-revalidate`) and noindex on its Pages hostname. This site's `_headers` now uses the same revalidation policy with additional Astro trailing-slash/project paths. Fingerprinted `/_astro/*` and nested artwork retain default caching. Do not copy another site's account IDs, mail records or DNSSEC state.
 
 For Games:
 
@@ -61,7 +74,7 @@ Dashboard Direct Upload accepts a folder or ZIP. Direct Upload cannot later be s
 5. Confirm all parent redirect destinations already work at `simplyshaped.fr`. Keep the old Games host available while publishing the verified artifact to the correct Pages production project.
 6. Before changing DNS authority, export every record and preserve MX, SPF, DKIM, DMARC, service/ownership TXT and CNAME, CAA and relevant DNSSEC/DS configuration. Use the exact nameservers assigned to the Games zone, not a guessed copy of SSS's pair. Coordinate DNSSEC so the authority change does not break resolution.
 7. Add apex and www to this exact Games Pages project's Custom domains. Follow its verified targets and certificate state before replacing only conflicting web/parking records. Keep registrar and all mail services. [Cloudflare custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/).
-8. Verify apex/www serve the real approved Games site over valid HTTPS, canonical uses the Games apex, ordinary pages do not inherit noindex, and Pages previews still do. Keep SSS-equivalent no-www-redirect behavior and normal caching defaults; do not add unrelated Worker, cache or security rules.
+8. Verify apex/www serve the real approved Games site over valid HTTPS, canonical uses the Games apex, ordinary pages do not inherit noindex, and Pages previews still do. Verify explicit navigation/root-file revalidation and normal caching for fingerprinted/nested assets. Keep SSS-equivalent no-www-redirect behavior; do not add unrelated Worker, dashboard cache or security rules. Cloudflare processes redirects before headers, so check cache headers on the final document response.
 9. Verify live `/app-ads.txt` byte-for-byte, both privacy URL forms and deletion anchor, all five projects, all six canonical/lowercase stories, RSS, static images, all thirty parent routes and a genuine 404. Check the parent/Sites family links and actual email receipt separately. Then confirm the coordinated source replacement with the owner.
 10. Retain the former working deployment and DNS values until checks are complete. If website, certificates, routes or mail regress, stop further switches and restore only the recorded web mapping or prior deployment. Do not remove the domains, source repositories or historical evidence.
 

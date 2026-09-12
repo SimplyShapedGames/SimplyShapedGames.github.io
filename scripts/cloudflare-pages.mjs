@@ -5,6 +5,7 @@ import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const limits = { files: 1000, fileBytes: 25 * 1024 * 1024 };
+export const navigationCacheRules = ['/', '/:page', '/:page/', '/projects/:project', '/projects/:project/', '/*/index.html'];
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const digest = data => createHash('sha256').update(data).digest('hex');
 
@@ -82,6 +83,26 @@ export function verifyPagesHosting(files) {
     'Permissions-Policy: camera=(), microphone=(), geolocation=()',
   ]) assert(globalBlock.includes(header), `Missing Cloudflare security header: ${header}`);
   assert(!/X-Robots-Tag/i.test(globalBlock), 'Custom-domain pages must not inherit global noindex');
+  assert(!/Cache-Control/i.test(globalBlock), 'Do not override hashed asset caching globally');
+  const headerLines = headers.split('\n');
+  const headerBlock = rule => {
+    const start = headerLines.indexOf(rule);
+    const lines = [];
+    for (let index = start + 1; start >= 0 && index < headerLines.length && /^[ \t]+/.test(headerLines[index]); index++) lines.push(headerLines[index].trim());
+    return lines;
+  };
+  for (const rule of navigationCacheRules) {
+    assert(headerBlock(rule).includes('Cache-Control: no-cache, must-revalidate'), `Missing browser revalidation rule for ${rule}`);
+  }
+  // These six non-overlapping path patterns follow Cloudflare's documented
+  // placeholder/splat syntax. No broader cache override may catch hashed assets.
+  const cacheRuleOwners = headerLines.flatMap((line, index) => {
+    if (!/^[ \t]+Cache-Control:/i.test(line)) return [];
+    let owner = index - 1;
+    while (owner >= 0 && /^[ \t]+/.test(headerLines[owner])) owner--;
+    return [headerLines[owner]];
+  });
+  assert.deepEqual(cacheRuleOwners, navigationCacheRules, 'Keep cache overrides limited to the intended navigation/root routes');
   for (const rule of ['https://:project.pages.dev/*', 'https://:version.:project.pages.dev/*', '/404.html', '/404']) {
     const start = headers.indexOf(`${rule}\n`);
     const block = start >= 0 ? headers.slice(start + rule.length + 1).split(/\n\s*\n/)[0] : '';
