@@ -1,0 +1,15 @@
+/* Exact SimplyShapedSites badge geometry and responsive lockup metrics.
+   The matching Games wordmark asset is supplied independently of the badge. */
+.site-header .brand.brand-lockup{position:static;display:inline-flex;align-items:center;gap:6px;width:max-content;height:auto;overflow:visible;flex:none;color:var(--coral);line-height:1}
+.brand-lockup .brand-mark{display:block;flex:none;width:54px;height:54px;background:currentColor;-webkit-mask:url('/brand/brand-lockup-mark.svg') center/contain no-repeat;mask:url('/brand/brand-lockup-mark.svg') center/contain no-repeat}
+.brand-lockup .brand-wordmark{display:flex;position:relative;flex:none;font-size:2.19rem;width:6.9295321637em;height:1em;line-height:1;white-space:nowrap}
+.brand-wordmark-prefix,.brand-wordmark-suffix{display:block;flex:none;height:1em;background:currentColor}
+.brand-wordmark-prefix{width:4.8578947368em;-webkit-mask:url('/brand/simplyshaped-wordmark.png') center/contain no-repeat;mask:url('/brand/simplyshaped-wordmark.png') center/contain no-repeat}
+.brand-wordmark-suffix{width:2.0716374269em;-webkit-mask:url('/brand/games-wordmark-suffix.png') center/contain no-repeat;mask:url('/brand/games-wordmark-suffix.png') center/contain no-repeat}
+@media(max-width:1150px){.brand-lockup .brand-mark{width:46px;height:46px}.brand-lockup .brand-wordmark{font-size:1.86rem}}
+@media(max-width:850px){.brand-lockup .brand-mark{width:42px;height:42px}.brand-lockup .brand-wordmark{font-size:1.7rem}}
+@media(max-width:620px){.brand-lockup .brand-mark{width:32px;height:32px}.brand-lockup .brand-wordmark{font-size:1.3rem}}
+@media(max-width:370px){.brand-lockup .brand-mark{width:26px;height:26px}.brand-lockup .brand-wordmark{font-size:1.06rem}}
+/* The full Games name must not squeeze the existing navigation or theme switch. */
+@media(min-width:761px) and (max-width:900px){.site-header{flex-wrap:wrap}.site-header .main-nav{order:3;width:100%;margin:0;justify-content:center}.site-header .theme-toggle{margin-left:auto}}
+@media(max-width:620px){.site-header{column-gap:10px}}

@@ -36,6 +36,10 @@ assert.deepEqual(expectedCounts, [5, 3, 2]);
 assert(home.includes('id="games-mods"') && home.includes('id="services"'), 'Live home is missing showcase/services destinations');
 assert(!/(?:€\s*500|500\s*€)/.test(home), 'Games pricing must be scoped to client needs, not a fixed Sites package');
 for (const [path, expectedType] of [
+  ['/brand/brand-lockup-mark.svg', /^image\/svg\+xml/],
+  ['/brand/simplyshaped-wordmark.png', /^image\/png/],
+  ['/brand/games-wordmark-suffix.png', /^image\/png/],
+  ['/favicon.svg', /^image\/svg\+xml/],
   ['/favicon-96x96.png', /^image\/png/],
   ['/favicon.ico', /^image\/(?:x-icon|vnd\.microsoft\.icon)/],
   ['/apple-touch-icon.png', /^image\/png/],

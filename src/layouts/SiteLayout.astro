@@ -9,7 +9,7 @@ import '../styles/pages.css';
 import '../styles/catalogue-content.css';
 import '../styles/portfolio-refresh.css';
 import '../styles/services.css';
-import logo from '../../assets/img/SSGLogo.png';
+import '../styles/brand-lockup.css';
 interface Props { title?: string; description?: string; active?: string; image?: string; canonicalPath?: string; articleDate?: string; }
 const { title = 'Game development & mods', description = 'Independent game development, mods and hands-on support by Storm Eckhart. A quote shaped around your project.', active = 'work', image = '/web-app-manifest-512x512.png', canonicalPath, articleDate } = Astro.props;
 const canonical = new URL(canonicalPath || Astro.url.pathname, Astro.site);
@@ -44,6 +44,7 @@ const editSource = pagePath.startsWith('projects/') ? `src/content/projects/${pa
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" type="application/rss+xml" title="SimplyShapedGames journal" href="/feed.xml" />
@@ -70,7 +71,7 @@ const editSource = pagePath.startsWith('projects/') ? `src/content/projects/${pa
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
-      <a class="brand" href="/" aria-label="SimplyShapedGames home"><img src={logo.src} width="1024" height="1024" alt="SimplyShapedGames" fetchpriority="high" /></a>
+      <a class="brand brand-lockup" href="/" aria-label="SimplyShapedGames home"><span class="brand-mark" aria-hidden="true"></span><span class="brand-wordmark" aria-hidden="true"><span class="brand-wordmark-prefix"></span><span class="brand-wordmark-suffix"></span></span></a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-navigation" hidden>Menu</button>
       <nav class="main-nav" id="main-navigation" aria-label="Main navigation">
         <a href="/#games-mods" aria-current={active === 'work' ? 'page' : undefined}>Games &amp; mods</a>

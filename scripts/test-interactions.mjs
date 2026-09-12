@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
 import sharp from 'sharp';
+import { createHash } from 'node:crypto';
 import { publicGameProjects, publicGamePosts, verifyRedirects, verifyPreservedGameSources } from './site-contract.mjs';
 
 // Exercise the actual inline/client scripts with small, deterministic interface
@@ -13,6 +14,47 @@ const headScript = layout.match(/<script is:inline>([\s\S]*?)<\/script>/)[1];
 const themeScript = ts.transpileModule(layout.match(/<script>([\s\S]*?)<\/script>/)[1], { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
 const searchSource = await readFile('src/pages/search.astro','utf8');
 const searchScript = ts.transpileModule(searchSource.match(/<script>([\s\S]*?)<\/script>/)[1], { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
+test('Games uses the exact family prefix and badge with a clean matching suffix mask', async () => {
+  assert(layout.includes('class="brand brand-lockup"'));
+  for(const name of ['brand-mark','brand-wordmark-prefix','brand-wordmark-suffix']) assert(layout.includes(`class="${name}"`));
+  const prefixFile=await readFile('public/brand/simplyshaped-wordmark.png');
+  assert.equal(createHash('sha256').update(prefixFile).digest('hex'),'63abae33c0b7310114cf201c1a5dac0c04a594aa8166d05a5f01d51c80ad33e3');
+  const prefix=await sharp(prefixFile).ensureAlpha().raw().toBuffer();
+  const combined=await sharp('public/brand/simplyshapedgames-wordmark.png').extract({left:0,top:0,width:1278,height:263}).ensureAlpha().raw().toBuffer();
+  assert(prefix.equals(combined),'No generated or replacement font may change the common SimplyShaped letters');
+  const suffix=await sharp('public/brand/games-wordmark-suffix.png').ensureAlpha().raw().toBuffer({resolveWithObject:true});
+  assert.equal(suffix.info.width,545);assert.equal(suffix.info.height,263);
+  let antialias=0;
+  for(let y=0;y<263;y++) for(let x=0;x<545;x++) {
+    const i=(y*545+x)*4,alpha=suffix.data[i+3];
+    if(alpha>0 && alpha<255)antialias++;
+    assert.equal(suffix.data[i]+suffix.data[i+1]+suffix.data[i+2],0,'Mask RGB must contain no checker/grey residue');
+    if(y<9 || y>=192 || x<4 || x>=539)assert.equal(alpha,0,'No checkerboard may survive around the Games lettering');
+  }
+  assert(antialias>100,'Preserve antialiased edges');
+  const mark=await readFile('public/brand/brand-lockup-mark.svg','utf8');
+  assert(mark.includes('viewBox="0 0 80 80"') && mark.includes('x="4" y="4" width="72" height="72" rx="19"'));
+  assert(mark.includes('<circle cx="27" cy="27" r="10" fill="#000000"/>'));
+  assert(mark.includes('<rect x="43" y="17" width="20" height="20" rx="4" fill="#000000"/>'));
+  const brandCss=await readFile('src/styles/brand-lockup.css','utf8');
+  assert(brandCss.includes('color:var(--coral)') && brandCss.includes('gap:6px'));
+  assert(brandCss.includes('width:54px;height:54px') && brandCss.includes('font-size:2.19rem'));
+  for(const [viewport,size,font]of[[1150,46,1.86],[850,42,1.7],[620,32,1.3],[370,26,1.06]])assert(brandCss.includes(`@media(max-width:${viewport}px){.brand-lockup .brand-mark{width:${size}px;height:${size}px}.brand-lockup .brand-wordmark{font-size:${font}rem}}`));
+});
+test('Games active icons and standalone logo consistently use the coral family badge', async () => {
+  const mark=await readFile('public/brand/brand-lockup-mark.svg');
+  assert(mark.equals(await readFile('public/brand/simplyshapedgames-mark.svg')));
+  assert(mark.equals(await readFile('public/favicon.svg')));
+  assert(layout.includes('type="image/svg+xml" sizes="any" href="/favicon.svg"'));
+  for(const [file,size]of[['favicon-96x96.png',96],['apple-touch-icon.png',180],['web-app-manifest-192x192.png',192],['web-app-manifest-512x512.png',512]]) {
+    const actual=await sharp(`public/${file}`).raw().toBuffer();
+    const expected=await sharp(mark).resize(size,size).flatten({background:'#fff'}).raw().toBuffer();
+    assert(actual.equals(expected),`${file} must use the same coral badge`);
+  }
+  const combined=await sharp('public/brand/simplyshapedgames-wordmark.png').extractChannel(3).raw().toBuffer();
+  const full=await sharp('public/brand/simplyshapedgames-logo.png').extract({left:450,top:72,width:1823,height:263}).extractChannel(3).raw().toBuffer();
+  assert(combined.equals(full),'Standalone logo must preserve wordmark alpha while applying coral');
+});
 function element() {
   return { hidden: true, content:'', textContent:'', value:'', dataset:{}, attributes:{}, events:{},
     setAttribute(name,value) { this.attributes[name] = value; },
