@@ -5,6 +5,7 @@ import { brandIcons, brandIconCopies } from '../src/lib/brand-icons.mjs';
 import { verifyPrivacy } from './verify-privacy.mjs';
 import { mergePagesRedirects } from './cloudflare-pages.mjs';
 import { gameProjectIds, movedProjectIds, movedPostIds, publicGameProjects, publicGamePosts, homeCatalogueCounts, verifyRedirects, verifyPreservedGameSources } from './site-contract.mjs';
+import { assertNoShowcaseMedia, assertGameStoreActions, retainedModLinks } from './game-link-contract.mjs';
 
 const root = resolve('dist');
 const origin = 'https://simplyshapedgames.fr';
@@ -20,6 +21,7 @@ for (const file of htmlFiles) {
   const html = await readHtml(file);
   const path = '/' + relative(root, file).replaceAll('\\','/').replace(/index\.html$/, '');
   const page = new URL(path, origin);
+  assertNoShowcaseMedia(html, path);
   if ((html.match(/<h1(?:\s|>)/g) || []).length !== 1) errors.push(`${path}: expected exactly one main heading`);
   if (!html.includes('class="theme-toggle"')) errors.push(`${path}: missing persistent theme control`);
   if (!html.includes('<title>') || !html.includes('name="description"')) errors.push(`${path}: missing page metadata`);
@@ -97,6 +99,8 @@ for (const source of projectSources) {
   const status = content.match(/^status: (.+)$/m)?.[1].trim();
   const target = `/projects/${id}/`;
   const projectHtml = await readHtml(resolve(root, `projects/${id}/index.html`));
+  assertGameStoreActions(projectHtml, id);
+  if (retainedModLinks[id]) assert(projectHtml.includes(`href="${retainedModLinks[id]}"`), `${id}: missing retained mod-download link`);
   assert(home.includes(`href="${target}"`), `${id} not reachable from all creations`);
   assert((await readHtml(resolve(root, `${category}/index.html`))).includes(`href="${target}"`), `${id} missing from category`);
   assert(projectHtml.includes(status), `${id} missing status`);
@@ -148,6 +152,7 @@ for (const name of ['app-ads.txt', 'CNAME']) assert.deepEqual(await readFile(res
 for (const page of ['aboutme', 'privacypolicy', 'tags']) assert.deepEqual(await readFile(resolve(root, `${page}.html`)), await readFile(resolve(root, `${page}/index.html`)), `${page}.html compatibility alias differs`);
 const posts = await publicGamePosts();
 const feed = await readFile(resolve(root, 'feed.xml'), 'utf8');
+assertNoShowcaseMedia(feed, 'feed.xml');
 assert.equal((feed.match(/<item>/g) || []).length, posts.length, 'RSS should contain every post');
 for (const post of posts) {
   const id = post.replace(/\.md$/, '');

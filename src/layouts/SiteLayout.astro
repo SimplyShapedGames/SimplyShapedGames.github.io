@@ -25,6 +25,8 @@ const organizationSchema = {
   '@type': 'Organization',
   '@id': new URL('/#organization', Astro.site).href,
   name: 'SimplyShapedGames',
+  email: 'stormeckhart@simplyshapedgames.fr',
+  founder: { '@type': 'Person', name: 'Storm Eckhart' },
   url: new URL('/', Astro.site).href,
   logo: {
     '@type': 'ImageObject',
@@ -33,7 +35,7 @@ const organizationSchema = {
     height: 512,
   },
   sameAs: ['https://github.com/SimplyShapedGames'],
-  parentOrganization: { '@type': 'Organization', name: 'SimplyShaped', url: 'https://simplyshaped.fr/' },
+  parentOrganization: { '@type': 'Organization', '@id': 'https://simplyshaped.fr/#organization', name: 'SimplyShaped', url: 'https://simplyshaped.fr/' },
 };
 const standardSources: Record<string, string> = { '': 'src/pages/index.astro', journal: 'src/pages/journal/index.astro', privacypolicy: 'privacypolicy.md', aboutme: 'src/pages/aboutme.astro', contact: 'src/pages/contact.astro', tags: 'src/pages/tags.astro', search: 'src/pages/search.astro', games: 'src/pages/[category].astro', mods: 'src/pages/[category].astro', websites: 'src/pages/[category].astro', design: 'src/pages/[category].astro' };
 const editSource = pagePath.startsWith('projects/') ? `src/content/projects/${pagePath.slice(9)}.md` : /^\d{4}-\d{2}-\d{2}-/.test(pagePath) ? `_posts/${pagePath}.md` : standardSources[pagePath];

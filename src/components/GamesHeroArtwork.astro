@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import Arrow from './Arrow.astro';
 import originalLogo from '../../assets/img/SSGLogo.png';
-import shapeDashBanner from '../assets/projects/shapedash-banner.png';
+import piecePerfectBanner from '../../assets/img/Sprite_GameFeature2.png';
 ---
 
 <div class="games-hero-artwork">
@@ -19,17 +19,17 @@ import shapeDashBanner from '../assets/projects/shapedash-banner.png';
     />
   </div>
   <figure class="hero-media games-project-peek">
-    <a href="/projects/shapedash/" class="games-project-link">
+    <a href="/projects/pieceperfect/" class="games-project-link">
       <Image
-        src={shapeDashBanner}
-        alt="ShapeDash: a blue runner stretching through colourful shaped obstacles"
-        widths={[640, 1000, 1400, 1794]}
+        src={piecePerfectBanner}
+        alt="PiecePerfect: colourful puzzle pieces, a game board and a smiling robot companion"
+        widths={[640, 1000, 1400, 1750]}
         sizes="(max-width: 640px) 85vw, (max-width: 900px) 520px, 43vw"
         format="webp"
         loading="eager"
         fetchpriority="high"
       />
-      <span class="games-project-caption"><span><strong>ShapeDash</strong><span>Unity · Android</span></span><Arrow /></span>
+      <span class="games-project-caption"><span><strong>PiecePerfect</strong><span>Unity · Android</span></span><Arrow /></span>
     </a>
   </figure>
 </div>

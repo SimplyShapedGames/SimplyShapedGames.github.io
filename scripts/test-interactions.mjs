@@ -6,7 +6,51 @@ import ts from 'typescript';
 import sharp from 'sharp';
 import { createHash } from 'node:crypto';
 import './test-favicons.mjs';
+import './test-witch-still.mjs';
 import { publicGameProjects, publicGamePosts, verifyRedirects, verifyPreservedGameSources, preservedGameSourceDigest } from './site-contract.mjs';
+import { assertNoShowcaseMedia, assertGameStoreActions, googlePlayLinks, retainedModLinks } from './game-link-contract.mjs';
+
+test('published Games projects and retained journal remove video promotions but preserve their store links', async () => {
+  for (const { id, source } of await publicGameProjects()) {
+    assertNoShowcaseMedia(source, id);
+    if (googlePlayLinks[id]) {
+      const actions = [...source.matchAll(/^\s+url: (.+)$/gm)].map(match => match[1].trim());
+      assert.deepEqual(actions, [googlePlayLinks[id]], `${id}: retain only its original Google Play action`);
+      assert.match(source, /- label: Google Play\r?\n/);
+    }
+    if (retainedModLinks[id]) assert(source.includes(retainedModLinks[id]), `${id}: retain its mod-download link`);
+  }
+  for (const file of await publicGamePosts()) assertNoShowcaseMedia(await readFile(`_posts/${file}`, 'utf8'), file);
+  const piecePerfectStory = await readFile('_posts/2026-03-18-SSG-Published-PiecePerfect.md', 'utf8');
+  assert(piecePerfectStory.includes(googlePlayLinks.pieceperfect), 'Preserve the dated story’s Google Play link');
+  assert(piecePerfectStory.includes('](/projects/pieceperfect/)'), 'Preserve the dated story’s project link');
+});
+
+test('showcase regression catches links, copy and embeds without blocking social channel or mod-store links', () => {
+  for (const bad of [
+    '<a href="https://youtu.be/WPpr2qAn16I">Watch</a>',
+    '<a href="https://www.youtube.com/shorts/WPpr2qAn16I">Watch</a>',
+    '<a href="https://www.youtube.com/watch?v=WPpr2qAn16I">Watch</a>',
+    '<iframe src="https://www.youtube-nocookie.com/embed/WPpr2qAn16I"></iframe>',
+    '<iframe src="https://player.vimeo.com/video/123"></iframe>',
+    '<video src="/game-trailer.mp4"></video>',
+    '<p>Watch the showcase.</p>',
+  ]) assert.throws(() => assertNoShowcaseMedia(bad, 'fixture'), assert.AssertionError);
+  assert.doesNotThrow(() => assertNoShowcaseMedia([
+    '<a href="https://www.youtube.com/channel/UCxrhpSKWBs58F1VbKxD07hg">YouTube</a>',
+    ...Object.values(googlePlayLinks), ...Object.values(retainedModLinks),
+    'Thanks for listening—and watch where you step.',
+  ].join('\n'), 'allowed links'));
+});
+
+test('built game action regression rejects lost stores and extra showcase actions', () => {
+  for (const [id, url] of Object.entries(googlePlayLinks)) {
+    const action = `<a class="button-link" href="${url}">Google Play <svg></svg></a>`;
+    assert.doesNotThrow(() => assertGameStoreActions(`<div class="project-actions">${action}</div>`, id));
+    assert.throws(() => assertGameStoreActions('<div class="project-actions"></div>', id), assert.AssertionError);
+    assert.throws(() => assertGameStoreActions(`<div class="project-actions">${action}<a href="https://example.com/video">Watch</a></div>`, id), assert.AssertionError);
+  }
+});
 
 test('Slide keeps its Android link without the unavailable showcase', async () => {
   for (const path of ['src/content/projects/slide.md', '_posts/2020-06-16-SSG-Published-Slide.md']) {
@@ -158,7 +202,7 @@ test('Witch previews use the square Workshop image and retain wide article artwo
   const selectors = artSource.slice(artSource.indexOf('export function closestArtwork')).replaceAll('export function', 'function');
   runInNewContext(ts.transpileModule(selectors, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText, context);
   const frontmatter = source => Object.fromEntries([...source.split('---')[1].matchAll(/^([\w-]+): (.+)$/gm)].map(([, key, value]) => [key, value.trim()]));
-  for (const [file, wide] of [['2025-08-31-SSG-The-Witch-Who-Laughs', 'witch'], ['2026-09-02-SSG-Witch-Audio-Update', 'witchPlayback']]) {
+  for (const [file, wide] of [['2025-08-31-SSG-The-Witch-Who-Laughs', 'witch'], ['2026-09-02-SSG-Witch-Audio-Update', 'witch']]) {
     const data = frontmatter(await readFile(`_posts/${file}.md`, 'utf8'));
     assert.equal(context.journalArtwork(data, 1), artwork.witchIcon);
     assert.equal(context.journalArtwork(data, 1.875), artwork[wide]);

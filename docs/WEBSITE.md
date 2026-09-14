@@ -36,6 +36,34 @@ Each published entry automatically appears on the home page, its category, searc
 
 ## Journal and existing URLs
 
+### Shared references across SimplyShaped sites
+
+A shared creation has the same name, current summary, status, platforms, role,
+store links, approved source artwork and gallery captions on SimplyShaped and
+SimplyShapedGames. Keep their shared journal entries aligned too, preserving
+dated history, release-specific links and immutable identifiers. Category scope,
+brand colours, local navigation and service calls to action may differ because
+the sites have different roles. Translations should convey the same facts;
+localized external destinations should follow the selected language.
+
+The three-site family is one in-house website project, not three client
+commissions. Its shared role descriptions and current screenshots must stay
+aligned in SS and SSS. Gymboree remains a separate existing-site maintenance
+reference. Public contact aliases remain distinct for each activity.
+
+After building all three repositories, run from Games:
+
+```sh
+pnpm verify:shared --portfolio "PATH_TO_SIMPLYSHAPED" --sites "PATH_TO_SIMPLYSHAPEDSITES"
+```
+
+This read-only cross-repository check reports content or artwork drift and
+checks the built family references. It never copies content, deploys a site or
+renames account identities. It is separate from each site's independent build;
+do not introduce imports into another repository or include private source in
+a public deployment just to share content. Passing it does not prove live
+publication or replace browser checks.
+
 Keep adding posts to `_posts/YYYY-MM-DD-Title.md`. The three original Android game posts keep their dated filenames and URLs; their titles, subtitles and copy were rewritten on 5 September 2026 to match the journal's editorial voice. Slide's unavailable iOS listing is no longer advertised. `related_projects` links posts to project slugs. The journal, tags and RSS are generated from those files.
 
 Retained game posts use original-case canonical URLs. Linux can generate both case variants; Windows may store only one physical directory. Cloudflare `_redirects` therefore appends twelve explicit lowercase-to-canonical rules for the six retained posts, keeping Windows-built uploads compatible. The thirty existing non-game redirects to SimplyShaped remain unchanged. No game privacy or advertising redirect is permitted.

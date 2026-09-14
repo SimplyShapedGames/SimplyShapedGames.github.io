@@ -13,8 +13,6 @@ order: 2
 links:
   - label: Google Play
     url: https://play.google.com/store/apps/details?id=com.SimplyShapedGames.PiecePerfect
-  - label: Watch the showcase
-    url: https://www.youtube.com/shorts/WPpr2qAn16I
 related: [shapedash, slide]
 ---
 ## A little piece of play.
@@ -29,6 +27,6 @@ Your robot companion reacts as you play. When a board needs another approach, a 
 
 ## Find your next puzzle
 
-Built in Unity for Android, PiecePerfect is the second published mobile game from SimplyShapedGames. The video showcase gives a closer look at the board, the pieces and the robot in motion.
+Built in Unity for Android, PiecePerfect is the second published mobile game from SimplyShapedGames.
 
-Watch the video showcase for a look at the game in motion, or find it on Google Play.
+Find it on Google Play using the link above.

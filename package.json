@@ -10,7 +10,8 @@
     "preview": "astro preview --host 127.0.0.1",
     "verify:preview": "node scripts/verify-preview.mjs",
     "check": "astro check",
-    "test": "node --test scripts/test-interactions.mjs scripts/test-preview.mjs scripts/test-cloudflare-pages.mjs scripts/test-services-visual-system.mjs",
+    "test": "node --test scripts/test-interactions.mjs scripts/test-preview.mjs scripts/test-cloudflare-pages.mjs scripts/test-services-visual-system.mjs scripts/test-shared-references.mjs",
+    "verify:shared": "node scripts/verify-shared-references.mjs",
     "verify:cloudflare": "node scripts/cloudflare-pages.mjs verify",
     "package:cloudflare": "node scripts/verify-build.mjs && node scripts/cloudflare-pages.mjs package"
   },

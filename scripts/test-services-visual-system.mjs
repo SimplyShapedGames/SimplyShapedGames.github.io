@@ -6,7 +6,7 @@ import sharp from 'sharp';
 const source = async path => readFile(new URL('../' + path, import.meta.url), 'utf8');
 const css = await source('src/styles/services-interactions.css');
 
-test('home displays the exact original Games identity and retains native ShapeDash artwork', async () => {
+test('home displays the original Games identity and the exact approved PiecePerfect banner', async () => {
   const home = await source('src/pages/index.astro');
   const hero = await source('src/components/GamesHeroArtwork.astro');
   assert(home.includes('<GamesHeroArtwork />'));
@@ -16,8 +16,17 @@ test('home displays the exact original Games identity and retains native ShapeDa
   assert(hero.includes('src={originalLogo}'));
   assert(hero.includes('aspect-ratio: 1;'));
   assert(hero.includes('background: #fff;'), 'The opaque original must retain its clean white canvas in either theme');
-  assert(hero.includes("import shapeDashBanner from '../assets/projects/shapedash-banner.png'"));
-  assert(hero.includes('href="/projects/shapedash/"'));
+  assert(hero.includes("import piecePerfectBanner from '../../assets/img/Sprite_GameFeature2.png'"));
+  const banner = await readFile(new URL('../assets/img/Sprite_GameFeature2.png', import.meta.url));
+  assert.equal(createHash('sha256').update(banner).digest('hex'), '5451941bf5515f0ca08ca47508e972918358967078726b19aea87659510b8242', 'Reuse the exact approved banner, not the old artwork or the cropped store feature graphic');
+  const metadata = await sharp(banner).metadata();
+  assert.deepEqual([metadata.width, metadata.height], [1750, 899]);
+  assert(hero.includes('src={piecePerfectBanner}'));
+  assert.deepEqual([...hero.matchAll(/\bhref="([^"]+)"/g)].map(match => match[1]), ['/projects/pieceperfect/'], 'The hero preview opens the matching PiecePerfect detail page');
+  assert(hero.includes('alt="PiecePerfect: colourful puzzle pieces, a game board and a smiling robot companion"'));
+  assert(hero.includes('<strong>PiecePerfect</strong><span>Unity · Android</span>'));
+  assert(hero.includes('widths={[640, 1000, 1400, 1750]}'), 'Keep the responsive banner candidates within the native width');
+  assert.doesNotMatch(hero, /shapedash/i, 'No stale ShapeDash artwork, label, alt text or destination in the hero only');
   assert(hero.includes('fetchpriority="high"'));
   assert(hero.includes('height: auto;'));
   assert(!hero.includes('object-fit: cover') && !hero.includes('overflow: hidden'), 'Do not crop the original logo or the game artwork');

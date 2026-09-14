@@ -17,4 +17,4 @@ A reactive robot keeps you company, and a few tools offer other ways to approach
 
 After navigating mazes in Slide, this release shifts the focus to the pieces themselves: how they fit, how their colours interact and what you can change before committing to a move.
 
-[Watch PiecePerfect in motion](https://www.youtube.com/shorts/WPpr2qAn16I), [read more about the project](/projects/pieceperfect/) or try it on [Google Play](https://play.google.com/store/apps/details?id=com.SimplyShapedGames.PiecePerfect).
+[Read more about the project](/projects/pieceperfect/) or try it on [Google Play](https://play.google.com/store/apps/details?id=com.SimplyShapedGames.PiecePerfect).

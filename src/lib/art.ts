@@ -6,7 +6,7 @@ import slide from '../../assets/img/GamePanel_Slide.png';
 import pieceperfectIcon from '../../assets/img/Sprite_GameLogo2.png';
 import slideIcon from '../../assets/img/GameLogo_Slide.png';
 import copycat from '../assets/projects/copycat-expansion.png';
-import witch from '../assets/projects/witch-who-laughs.jpg';
+import witch from '../assets/projects/witch-who-laughs-approved.png';
 import witchIcon from '../assets/projects/witch-who-laughs-icon.jpg';
 import sticker from '../assets/projects/geneva-window-sticker.png';
 import copycatMaterials from '../assets/projects/gallery/copycat-materials.png';
@@ -15,7 +15,7 @@ import gymboreeReopening from '../assets/projects/gallery/gymboree-reopening.png
 import gymboreeReopeningFlyer from '../assets/projects/gallery/gymboree-reopening-flyer.png';
 import gymboreeReopeningFlyerBanner from '../assets/projects/gymboree-reopening-flyer-banner.png';
 import gymboreeReopeningFlyerSquare from '../assets/projects/gymboree-reopening-flyer-square.png';
-import witchPlayback from '../assets/projects/gallery/witch-playback.jpg';
+import witchPlayback from '../assets/projects/gallery/witch-sitting-video.png';
 import gymboreeWebsite from '../assets/projects/gymboree-website.png';
 import ssgWebsite from '../assets/projects/ssg-website.png';
 import gymboreeWebsiteSquare from '../assets/projects/gymboree-website-square.png';

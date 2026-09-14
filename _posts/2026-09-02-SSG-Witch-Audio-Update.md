@@ -3,7 +3,7 @@ layout: post
 title: A new voice for The Witch Who Laughs
 subtitle: More variety, remastered audio and more deliberate playback.
 image: witchIcon
-wide-image: witchPlayback
+wide-image: witch
 tags: [mods, left4dead2, updates, audio]
 related_projects: [the-witch-who-laughs]
 ---

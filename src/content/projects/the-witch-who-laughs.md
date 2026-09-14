@@ -11,8 +11,8 @@ icon: witchIcon
 order: 5
 gallery:
   - image: witchPlayback
-    alt: The wandering Witch during a Left 4 Dead 2 audio playback test
-    caption: Wandering Witch playback test in TumTaRA, a third-party testing map. Development capture.
+    alt: The sitting Witch beneath the trees and string lights in Left 4 Dead 2
+    caption: The sitting Witch in Left 4 Dead 2. Still from Storm's gameplay footage.
 links:
   - label: Steam Workshop
     url: https://steamcommunity.com/sharedfiles/filedetails/?id=3559560048
