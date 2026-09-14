@@ -12,8 +12,9 @@ import '../styles/services.css';
 import '../styles/brand-lockup.css';
 import '../styles/services-interactions.css';
 import Arrow from '../components/Arrow.astro';
+import { brandIcons } from '../lib/brand-icons.mjs';
 interface Props { title?: string; description?: string; active?: string; image?: string; canonicalPath?: string; articleDate?: string; }
-const { title = 'Game development & mods', description = 'Independent game development, mods and hands-on support by Storm Eckhart. A quote shaped around your project.', active = 'work', image = '/web-app-manifest-512x512.png', canonicalPath, articleDate } = Astro.props;
+const { title = 'Game development & mods', description = 'Independent game development, mods and hands-on support by Storm Eckhart. A quote shaped around your project.', active = 'work', image = brandIcons.png512, canonicalPath, articleDate } = Astro.props;
 const canonical = new URL(canonicalPath || Astro.url.pathname, Astro.site);
 const pagePath = canonical.pathname.replace(/^\/|\/$/g, '');
 const organizationSchema = {
@@ -24,7 +25,7 @@ const organizationSchema = {
   url: new URL('/', Astro.site).href,
   logo: {
     '@type': 'ImageObject',
-    url: new URL('/web-app-manifest-512x512.png', Astro.site).href,
+    url: new URL(brandIcons.png512, Astro.site).href,
     width: 512,
     height: 512,
   },
@@ -44,11 +45,11 @@ const editSource = pagePath.startsWith('projects/') ? `src/content/projects/${pa
     <title>{title} · SimplyShapedGames</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=20260914" />
-    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="/favicon.ico?v=20260914" />
-    <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20260914" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260914" />
-    <link rel="manifest" href="/site.webmanifest?v=20260914" />
+    <link rel="icon" type="image/png" sizes="96x96" href={brandIcons.png96} />
+    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href={brandIcons.ico} />
+    <link rel="icon" type="image/svg+xml" sizes="any" href={brandIcons.svg} />
+    <link rel="apple-touch-icon" sizes="180x180" href={brandIcons.apple} />
+    <link rel="manifest" href={brandIcons.manifest} />
     <link rel="alternate" type="application/rss+xml" title="SimplyShapedGames journal" href="/feed.xml" />
     <meta property="og:title" content={`${title} · SimplyShapedGames`} />
     <meta property="og:site_name" content="SimplyShapedGames" />

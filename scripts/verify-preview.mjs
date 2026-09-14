@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { brandIcons } from '../src/lib/brand-icons.mjs';
 import { mergePagesRedirects } from './cloudflare-pages.mjs';
 import { privateProjectIds } from './verify-privacy.mjs';
 import { movedProjectIds, movedPostIds, publicGameProjects, publicGamePosts, homeCatalogueCounts, verifyRedirects, verifyPreservedGameSources } from './site-contract.mjs';
@@ -35,6 +36,9 @@ assert.deepEqual(actualCounts, expectedCounts, 'Live category counts do not matc
 assert.deepEqual(expectedCounts, [5, 3, 2]);
 assert(home.includes('id="games-mods"') && home.includes('id="services"'), 'Live home is missing showcase/services destinations');
 assert(!/(?:€\s*500|500\s*€)/.test(home), 'Games pricing must be scoped to client needs, not a fixed Sites package');
+for (const path of [brandIcons.svg, brandIcons.ico, brandIcons.png96, brandIcons.apple, brandIcons.manifest]) {
+  assert(home.includes(`href="${path}"`), `Live home must request the fresh Games icon ${path}`);
+}
 for (const [path, expectedType] of [
   ['/brand/brand-lockup-mark.svg', /^image\/svg\+xml/],
   ['/brand/simplyshaped-wordmark.png', /^image\/png/],
@@ -44,6 +48,13 @@ for (const [path, expectedType] of [
   ['/favicon.ico', /^image\/(?:x-icon|vnd\.microsoft\.icon)/],
   ['/apple-touch-icon.png', /^image\/png/],
   ['/site.webmanifest', /^(?:application\/manifest\+json|application\/json)/],
+  [brandIcons.svg, /^image\/svg\+xml/],
+  [brandIcons.ico, /^image\/(?:x-icon|vnd\.microsoft\.icon)/],
+  [brandIcons.png96, /^image\/png/],
+  [brandIcons.apple, /^image\/png/],
+  [brandIcons.png192, /^image\/png/],
+  [brandIcons.png512, /^image\/png/],
+  [brandIcons.manifest, /^(?:application\/manifest\+json|application\/json)/],
 ]) {
   const response = await fetch(new URL(path, origin), { signal: AbortSignal.timeout(15000), redirect: 'error' });
   const body = await response.arrayBuffer();

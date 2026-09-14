@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { brandIcons, brandIconCopies, brandIconSourceSHA256 } from '../src/lib/brand-icons.mjs';
 import sharp from 'sharp';
 
 const packageInfo = JSON.parse(await readFile('package.json', 'utf8'));
@@ -8,7 +10,6 @@ const games = packageInfo.name === 'simplyshapedgames-website';
 const title = games ? 'SimplyShapedGames' : 'SimplyShaped';
 const tileColour = games ? '#3C82F6' : '#000000';
 const tileRGB = games ? [60, 130, 246, 255] : [0, 0, 0, 255];
-const iconVersion = '20260914';
 const svg = await readFile('public/favicon.svg');
 // Verbatim native geometry from Sites' public/brand/simplyshapedsites-mark.svg.
 // Only title and tile ink vary across the family. This test needs no sibling repo.
@@ -76,12 +77,29 @@ test('ICO contains exact transparent 16px, 32px and 48px fallbacks', async () =>
   assert.equal(ico.length, end);
 });
 
-test('all icon links request the new icon revision instead of stale browser caches', async () => {
+test('all icon links isolate Games from cached generic icon paths', async () => {
   const layout = await readFile('src/layouts/SiteLayout.astro', 'utf8');
-  for (const file of ['favicon.svg', 'favicon.ico', 'favicon-96x96.png', 'apple-touch-icon.png', 'site.webmanifest']) {
-    assert(layout.includes(`href="/${file}?v=${iconVersion}"`), `${file} must use the new icon revision`);
+  for (const key of ['svg', 'ico', 'png96', 'apple', 'manifest']) {
+    assert(layout.includes(`href={brandIcons.${key}}`), `${key} must use the shared content-addressed Games URL`);
   }
+  assert(!/href="\/(?:favicon|apple-touch-icon|site\.webmanifest)/.test(layout), 'Do not reintroduce generic cached icon links');
+  assert(layout.includes('image = brandIcons.png512') && layout.includes('new URL(brandIcons.png512, Astro.site)'), 'Default social image and organization logo use the same fresh blue icon');
   const manifest = JSON.parse(await readFile('public/site.webmanifest', 'utf8'));
   assert.equal(manifest.name, title);
-  assert.deepEqual(manifest.icons.map(icon => icon.src), [192, 512].map(size => `/web-app-manifest-${size}x${size}.png?v=${iconVersion}`));
+  assert.deepEqual(manifest.icons.map(icon => icon.src), [brandIcons.png192, brandIcons.png512]);
+});
+
+test('content-addressed icons are exact native copies with a platform-stable digest', async () => {
+  const canonicalSVG = svg.toString('utf8').replaceAll('\r\n', '\n');
+  const digest = text => createHash('sha256').update(text.replaceAll('\r\n', '\n')).digest('hex');
+  assert.equal(digest(canonicalSVG), brandIconSourceSHA256);
+  assert.equal(digest(canonicalSVG.replaceAll('\n', '\r\n')), brandIconSourceSHA256, 'Git line endings must not change icon URLs');
+  for (const [source, target] of brandIconCopies) {
+    assert(target.startsWith(`/brand/icons/ssg-blue-${brandIconSourceSHA256.slice(0, 12)}`));
+    const canonicalBytes = await readFile(`public/${source}`);
+    const namedBytes = await readFile(`public${target}`);
+    if (source.endsWith('.svg') || source.endsWith('.webmanifest')) {
+      assert.equal(namedBytes.toString('utf8').replaceAll('\r\n', '\n'), canonicalBytes.toString('utf8').replaceAll('\r\n', '\n'), `${target} must match its compatibility source`);
+    } else assert(namedBytes.equals(canonicalBytes), `${target} must be byte-identical to its compatibility source`);
+  }
 });

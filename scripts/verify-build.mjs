@@ -1,6 +1,7 @@
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { resolve, relative, dirname, extname } from 'node:path';
 import assert from 'node:assert/strict';
+import { brandIcons, brandIconCopies } from '../src/lib/brand-icons.mjs';
 import { verifyPrivacy } from './verify-privacy.mjs';
 import { mergePagesRedirects } from './cloudflare-pages.mjs';
 import { gameProjectIds, movedProjectIds, movedPostIds, publicGameProjects, publicGamePosts, homeCatalogueCounts, verifyRedirects, verifyPreservedGameSources } from './site-contract.mjs';
@@ -59,12 +60,12 @@ const actualProjectIds = (await readdir(resolve(root, 'projects'), { withFileTyp
 assert.deepEqual(actualProjectIds, [...gameProjectIds].sort(), 'Only the five approved game/mod detail routes belong on this domain');
 const indexNowKey = '895587a45b4a41d2a0b4f8e2c126ffcc';
 assert.equal((await readFile(resolve(root, `${indexNowKey}.txt`), 'utf8')).trim(), indexNowKey, 'IndexNow ownership key is missing or invalid');
-for (const favicon of ['/favicon.svg', '/favicon-96x96.png', '/favicon.ico', '/apple-touch-icon.png', '/site.webmanifest']) {
-  assert(home.includes(`href="${favicon}?v=20260914"`), `Home page is missing the current ${favicon} revision`);
+for (const favicon of [brandIcons.svg, brandIcons.png96, brandIcons.ico, brandIcons.apple, brandIcons.manifest]) {
+  for (const file of htmlFiles) assert((await readHtml(file)).includes(`href="${favicon}"`), `${file} is missing the content-addressed Games icon ${favicon}`);
 }
 assert(home.includes('"@type":"Organization"'), 'Home page is missing Organization structured data');
 assert(home.includes('"name":"SimplyShapedGames"'), 'Organization structured data is missing the company name');
-assert(home.includes('https://simplyshapedgames.fr/web-app-manifest-512x512.png'), 'Organization structured data is missing the stable company logo');
+assert(home.includes(new URL(brandIcons.png512, origin).href), 'Organization structured data is missing the content-addressed blue company logo');
 const brandIconDimensions = new Map([
   ['favicon-96x96.png', [96, 96]],
   ['apple-touch-icon.png', [180, 180]],
@@ -79,7 +80,13 @@ for (const [name, dimensions] of brandIconDimensions) {
 assert((await stat(resolve(root, 'favicon.ico'))).size > 0, 'favicon.ico is empty');
 const manifest = JSON.parse(await readFile(resolve(root, 'site.webmanifest'), 'utf8'));
 assert.equal(manifest.name, 'SimplyShapedGames', 'Web app manifest has the wrong company name');
-assert.deepEqual(manifest.icons.map(icon => icon.src), ['/web-app-manifest-192x192.png?v=20260914', '/web-app-manifest-512x512.png?v=20260914'], 'Web app manifest icons must use the current revision');
+assert.deepEqual(manifest.icons.map(icon => icon.src), [brandIcons.png192, brandIcons.png512], 'Web app manifest icons must use the content-addressed Games paths');
+for (const [source, target] of brandIconCopies) {
+  const original = await readFile(resolve(root, source));
+  const copy = await readFile(resolve(root, '.' + target));
+  if (source.endsWith('.svg') || source.endsWith('.webmanifest')) assert.equal(copy.toString('utf8').replaceAll('\r\n', '\n'), original.toString('utf8').replaceAll('\r\n', '\n'), `${target} differs from its compatible original`);
+  else assert(copy.equals(original), `${target} differs from its compatible original`);
+}
 let projectCount = 0;
 let galleryCount = 0;
 for (const source of projectSources) {
