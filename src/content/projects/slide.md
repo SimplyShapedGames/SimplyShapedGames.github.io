@@ -13,8 +13,6 @@ order: 3
 links:
   - label: Google Play
     url: https://play.google.com/store/apps/details?id=com.SimplyShapedGames.Slide_
-  - label: Watch the showcase
-    url: https://youtu.be/82uG_a-lIes
 related: [shapedash, pieceperfect]
 ---
 ## Simple yet fun.

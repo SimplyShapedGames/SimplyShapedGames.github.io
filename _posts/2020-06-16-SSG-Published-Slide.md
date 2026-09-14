@@ -17,4 +17,4 @@ That starting point leaves room for different challenges. Timed levels add press
 
 For me, this is a first milestone: SimplyShapedGames now has a finished game for people to play.
 
-Slide is available on **Android** through [Google Play](https://play.google.com/store/apps/details?id=com.SimplyShapedGames.Slide_). You can also [watch the showcase](https://youtu.be/82uG_a-lIes) or [explore the project](/projects/slide/).
+Slide is available on **Android** through [Google Play](https://play.google.com/store/apps/details?id=com.SimplyShapedGames.Slide_). You can also [explore the project](/projects/slide/).

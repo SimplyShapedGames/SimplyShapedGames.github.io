@@ -8,6 +8,14 @@ import { createHash } from 'node:crypto';
 import './test-favicons.mjs';
 import { publicGameProjects, publicGamePosts, verifyRedirects, verifyPreservedGameSources, preservedGameSourceDigest } from './site-contract.mjs';
 
+test('Slide keeps its Android link without the unavailable showcase', async () => {
+  for (const path of ['src/content/projects/slide.md', '_posts/2020-06-16-SSG-Published-Slide.md']) {
+    const slide = await readFile(path, 'utf8');
+    assert(slide.includes('https://play.google.com/store/apps/details?id=com.SimplyShapedGames.Slide_'));
+    assert.doesNotMatch(slide, /watch the showcase|82uG_a-lIes/i);
+  }
+});
+
 test('advertising preservation accepts only Git line-ending differences', async () => {
   const original = await readFile('app-ads.txt');
   const lf = original.toString('utf8').replaceAll('\r\n', '\n');
