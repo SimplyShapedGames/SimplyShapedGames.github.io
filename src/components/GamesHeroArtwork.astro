@@ -1,0 +1,135 @@
+---
+import { Image } from 'astro:assets';
+import Arrow from './Arrow.astro';
+import originalLogo from '../../assets/img/SSGLogo.png';
+import shapeDashBanner from '../assets/projects/shapedash-banner.png';
+---
+
+<div class="games-hero-artwork">
+  <div class="games-brand-poster">
+    <p class="poster-caption">Ideas take shape.<br />Then you press play.</p>
+    <Image
+      src={originalLogo}
+      class="original-games-logo"
+      alt="Original SimplyShapedGames logo, with its circle, square and triangle lettering"
+      widths={[360, 540, 720, 1024]}
+      sizes="(max-width: 640px) 72vw, (max-width: 900px) 440px, 36vw"
+      format="webp"
+      loading="eager"
+    />
+  </div>
+  <figure class="hero-media games-project-peek">
+    <a href="/projects/shapedash/" class="games-project-link">
+      <Image
+        src={shapeDashBanner}
+        alt="ShapeDash: a blue runner stretching through colourful shaped obstacles"
+        widths={[640, 1000, 1400, 1794]}
+        sizes="(max-width: 640px) 85vw, (max-width: 900px) 520px, 43vw"
+        format="webp"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <span class="games-project-caption"><span><strong>ShapeDash</strong><span>Unity · Android</span></span><Arrow /></span>
+    </a>
+  </figure>
+</div>
+
+<style>
+  .games-hero-artwork {
+    width: 100%;
+    max-width: 520px;
+    min-width: 0;
+    margin-inline: auto;
+    padding: 16px 10px;
+  }
+  .games-brand-poster {
+    position: relative;
+    width: 86%;
+    margin-left: auto;
+    padding-top: 42px;
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    background: #fff;
+    box-shadow: 0 15px 45px #00000006;
+    transform: rotate(3deg);
+  }
+  .poster-caption {
+    position: absolute;
+    top: 22px;
+    right: 24px;
+    margin: 0;
+    color: #202020;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: .09em;
+    text-align: right;
+    text-transform: uppercase;
+  }
+  .original-games-logo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 0 0 26px 26px;
+  }
+  .games-project-peek {
+    position: relative;
+    width: 100%;
+    margin: -16% 0 0;
+    transform: rotate(-3deg);
+  }
+  .games-project-link {
+    display: block;
+    padding: 9px;
+    border: 1px solid var(--line);
+    border-radius: 21px;
+    background: var(--paper);
+    box-shadow: 0 12px 30px #0000000d;
+    text-decoration: none;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .games-project-link > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 13px;
+  }
+  .games-project-caption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 9px 5px;
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .games-project-caption > span { display: flex; align-items: baseline; gap: 14px; }
+  .games-project-caption strong { font-weight: 800; }
+  .games-project-caption span > span { color: var(--muted); font-size: 13px; }
+  .games-project-caption :global(svg) { flex: none; width: 20px; height: 20px; }
+  .games-project-link:is(:hover, :focus-visible) {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px #00000012;
+  }
+  .games-project-link:is(:hover, :focus-visible) .games-project-caption { color: var(--link-ink); }
+  @media (max-width: 900px) {
+    .games-hero-artwork { max-width: 520px; }
+  }
+  @media (max-width: 640px) {
+    .games-hero-artwork { padding: 12px 6px; }
+    .games-brand-poster { padding-top: 35px; border-radius: 20px; }
+    .poster-caption { top: 18px; right: 17px; font-size: 10px; }
+    .original-games-logo { border-radius: 0 0 20px 20px; }
+    .games-project-link { padding: 6px; border-radius: 16px; }
+    .games-project-link > img { border-radius: 10px; }
+    .games-project-caption { padding: 10px 7px 4px; font-size: 15px; }
+    .games-project-caption > span { gap: 8px; }
+    .games-project-caption span > span { font-size: 11px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .games-project-link { transition: none; }
+    .games-project-link:is(:hover, :focus-visible) { transform: none; }
+  }
+</style>

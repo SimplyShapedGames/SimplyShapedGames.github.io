@@ -6,6 +6,24 @@ import sharp from 'sharp';
 const source = async path => readFile(new URL('../' + path, import.meta.url), 'utf8');
 const css = await source('src/styles/services-interactions.css');
 
+test('home displays the exact original Games identity and retains native ShapeDash artwork', async () => {
+  const home = await source('src/pages/index.astro');
+  const hero = await source('src/components/GamesHeroArtwork.astro');
+  assert(home.includes('<GamesHeroArtwork />'));
+  assert(hero.includes("import originalLogo from '../../assets/img/SSGLogo.png'"));
+  const original = await readFile(new URL('../assets/img/SSGLogo.png', import.meta.url));
+  assert.equal(createHash('sha256').update(original).digest('hex'), '438ff3537a5e4875cc84330bfafbe7f970826efa81c9450c5a0de2fdbd45c5d9');
+  assert(hero.includes('src={originalLogo}'));
+  assert(hero.includes('aspect-ratio: 1;'));
+  assert(hero.includes('background: #fff;'), 'The opaque original must retain its clean white canvas in either theme');
+  assert(hero.includes("import shapeDashBanner from '../assets/projects/shapedash-banner.png'"));
+  assert(hero.includes('href="/projects/shapedash/"'));
+  assert(hero.includes('fetchpriority="high"'));
+  assert(hero.includes('height: auto;'));
+  assert(!hero.includes('object-fit: cover') && !hero.includes('overflow: hidden'), 'Do not crop the original logo or the game artwork');
+  assert(hero.includes('@media (prefers-reduced-motion: reduce)'));
+});
+
 test('About reuses the exact approved Sites portrait with responsive native proportions', async () => {
   const portrait = await source('src/components/StormPortrait.astro');
   const about = await source('src/pages/aboutme.astro');

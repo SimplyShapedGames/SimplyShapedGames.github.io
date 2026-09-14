@@ -1,9 +1,8 @@
 ---
-import { Image } from 'astro:assets';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Catalogue from '../components/Catalogue.astro';
 import Arrow from '../components/Arrow.astro';
-import banner from '../assets/projects/shapedash-banner.png';
+import GamesHeroArtwork from '../components/GamesHeroArtwork.astro';
 import { allProjects } from '../lib/catalogue';
 const projects = await allProjects();
 const gameCount = projects.filter(project => project.data.category === 'games').length;
@@ -26,7 +25,7 @@ const steps = [
       <p class="quote-note">A quote shaped around your scope, platforms and priorities.</p>
       <p class="released-proof"><a class="service-text-link" href="/#games-mods">{gameCount} released games · {modCount} published mods <Arrow /></a><span>Personal projects you can explore and play.</span></p>
     </div>
-    <figure class="hero-media"><Image src={banner} alt="ShapeDash: a blue runner stretching through colourful shaped obstacles" widths={[640, 1000, 1400, 1794]} sizes="(max-width: 900px) 90vw, 47vw" format="webp" loading="eager" fetchpriority="high" /><figcaption><a href="/projects/shapedash/">ShapeDash</a><span>Unity · Android</span></figcaption></figure>
+    <GamesHeroArtwork />
   </section>
   <section class="services-section service-container" id="services" aria-labelledby="services-title"><h2 id="services-title">Build the part your<br class="desktop-break" /> project needs.</h2><div class="service-accent-line" aria-hidden="true"></div><div class="service-rows">{services.map(service => <div class="service-row"><h3>{service.title}</h3><div><p>{service.description}</p><a class="service-text-link service-proof-link" href={service.href}>{service.proof}<Arrow /></a></div></div>)}</div></section>
   <Catalogue />
