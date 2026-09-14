@@ -1,8 +1,32 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import sharp from 'sharp';
 const source = async path => readFile(new URL('../' + path, import.meta.url), 'utf8');
 const css = await source('src/styles/services-interactions.css');
+
+test('About reuses the exact approved Sites portrait with responsive native proportions', async () => {
+  const portrait = await source('src/components/StormPortrait.astro');
+  const about = await source('src/pages/aboutme.astro');
+  assert(about.includes('<StormPortrait accent="var(--primary)" />'));
+  assert(about.includes('<h2>It started<br /> with games.</h2>'), 'Keep a word separator when the mobile layout hides the line break');
+  assert(about.includes('.story-layout > * { min-width: 0; }'), 'Portrait and prose must shrink below their intrinsic width');
+  assert.match(about, /@media \(max-width: 900px\)\s*\{\s*\.story-layout \{ grid-template-columns: minmax\(0, 1fr\); \}/, 'The phone story grid must not use its contents as an automatic minimum width');
+  assert(portrait.includes('alt="Storm Eckhart smiling outdoors, March 2026"'));
+  assert(portrait.includes('width="640"') && portrait.includes('height="640"'));
+  assert(portrait.includes('width: 100%; height: auto; aspect-ratio: 1'));
+  for (const [size, expected] of [[320, '4fe4609f3033ecae83c06be4abbf850633b7deb9391efe990b1e12600ef26f3d'], [640, '9e64fdfded927bcd7d6b33d124358350fab27e91bdf44b21e60f953aa82d785f']]) {
+    const file = `public/portraits/storm-eckhart-smiling-2026-${size}.webp`;
+    const bytes = await readFile(file);
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), expected, 'Reuse the approved real portrait without retouching');
+    const metadata = await sharp(bytes).metadata();
+    assert.equal(metadata.width, size);
+    assert.equal(metadata.height, size);
+    assert(!metadata.exif && !metadata.xmp && !metadata.iptc, 'Do not publish private portrait metadata');
+    assert(portrait.includes(`/portraits/storm-eckhart-smiling-2026-${size}.webp ${size}w`));
+  }
+});
 test('Games owns the requested blue pair in both themes', () => {
   assert.match(css, /--primary: #3c82f6;/);
   assert.match(css, /--companion: #3068c5;/);

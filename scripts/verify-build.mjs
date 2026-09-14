@@ -137,6 +137,10 @@ for (const id of movedPostIds) {
 }
 for (const category of ['websites', 'design', 'graphic-design']) await assert.rejects(stat(resolve(root, category, 'index.html')), { code: 'ENOENT' }, `${category} belongs on the parent portfolio`);
 const contactHtml = await readHtml(resolve(root, 'contact/index.html'));
+const aboutHtml = await readHtml(resolve(root, 'aboutme/index.html'));
+assert(aboutHtml.includes('/portraits/storm-eckhart-smiling-2026-640.webp'), 'About must display the approved real portrait');
+assert(aboutHtml.includes('/portraits/storm-eckhart-smiling-2026-320.webp 320w'), 'About must offer the responsive portrait');
+assert(aboutHtml.includes('alt="Storm Eckhart smiling outdoors, March 2026"'), 'The portrait needs descriptive alternative text');
 assert(contactHtml.includes('data-project-brief'), 'Contact must include the project brief workflow');
 assert(/href="mailto:[^"\s]+@[^"\s]+"/.test(contactHtml), 'Contact needs a working direct email alternative');
 for (const field of ['project-type', 'project-scope', 'project-platforms', 'project-timing', 'project-budget']) assert(contactHtml.includes(`id="${field}"`), `Project brief is missing ${field}`);

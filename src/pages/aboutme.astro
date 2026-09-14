@@ -1,12 +1,21 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Arrow from '../components/Arrow.astro';
+import StormPortrait from '../components/StormPortrait.astro';
 ---
 <SiteLayout title="About Storm & SimplyShapedGames" active="about" description="Storm Eckhart started SimplyShapedGames in 2017. Today, it is the game and mod development activity within SimplyShaped, alongside SimplyShapedSites.">
   <article class="service-container story-page">
     <header class="service-page-heading"><h1>Hi, I'm Storm.</h1><p>The independent developer behind SimplyShapedGames.</p></header>
-    <div class="story-layout"><div class="story-lead"><h2>It started<br />with games.</h2><p>Small ideas, finished games and new ways to play.</p><a class="service-text-link" href="/#games-mods">Explore games &amp; mods <Arrow /></a></div>
+    <div class="story-layout"><div class="story-lead"><StormPortrait accent="var(--primary)" /><h2>It started<br /> with games.</h2><p>Small ideas, finished games and new ways to play.</p><a class="service-text-link" href="/#games-mods">Explore games &amp; mods <Arrow /></a></div>
       <div class="prose"><p>I'm Storm Eckhart. I started SimplyShapedGames in 2017 to give my ideas a home and push myself to turn them into finished games.</p><p>Since then, I've published <a href="/projects/slide/">Slide</a>, <a href="/projects/pieceperfect/">PiecePerfect</a> and <a href="/projects/shapedash/">ShapeDash</a>. My work also includes game mods: <a href="/projects/copycat-expansion/">Create: Copycat Expansion</a> for Minecraft and <a href="/projects/the-witch-who-laughs/">The Witch Who Laughs</a> for Left 4 Dead 2.</p><h2>One person. Three connected names.</h2><p><a href="https://simplyshaped.fr/">SimplyShaped</a> is the home for my wider creative work: games, mods, websites and design. It brings the full portfolio and its story together.</p><p><strong>SimplyShapedGames</strong> is where I focus on games and mods: projects to play, extensions to existing worlds, and development work for people with something they want to build.</p><p><a href="https://simplyshapedsites.fr/">SimplyShapedSites</a> is my dedicated website design and development activity. If you need a website rather than a game, that's the place to start.</p><h2>Work shaped around the project.</h2><p>A prototype, a specific bug and a complete small game call for different kinds of work. We can discuss what you have, what you want to make and what fits your priorities. The scope, milestones and quote come before development starts.</p><p><a class="service-text-link" href="/contact/">Discuss your project <Arrow /></a></p></div>
     </div>
   </article>
 </SiteLayout>
+<style>
+  /* A portrait must not become the grid's minimum width on narrow phones. */
+  .story-layout { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
+  .story-layout > * { min-width: 0; }
+  @media (max-width: 900px) {
+    .story-layout { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

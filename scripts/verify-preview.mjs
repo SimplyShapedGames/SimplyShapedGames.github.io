@@ -98,6 +98,8 @@ for (const post of posts) {
 }
 assert((await page('/privacypolicy/')).includes('request-user-data-deletion'), 'Live privacy content is missing');
 const about = await page('/aboutme/');
+assert(about.includes('/portraits/storm-eckhart-smiling-2026-640.webp'), 'The approved real About portrait is missing');
+assert(about.includes('/portraits/storm-eckhart-smiling-2026-320.webp 320w'), 'Responsive About portrait is missing');
 assert(about.includes('Storm') && about.includes('2017'), 'Games About story must identify its independent founder and history');
 for (const name of ['SimplyShapedGames', 'SimplyShapedSites', 'SimplyShaped']) assert(about.includes(name), `About must explain ${name}`);
 const contact = await page('/contact/');
