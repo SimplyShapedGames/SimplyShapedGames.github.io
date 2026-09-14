@@ -15,9 +15,9 @@ const Heading = standalone ? 'h1' : 'h2';
   <Heading id="work-title">{heading}</Heading>
   {category === 'all' ? <>
     <div class="work-filters" role="group" aria-label="Filter games and mods" hidden>
-      <button type="button" data-work-filter="all" aria-pressed="true">All</button>
-      <button type="button" data-work-filter="games" aria-pressed="false">Games</button>
-      <button type="button" data-work-filter="mods" aria-pressed="false">Mods</button>
+      <button type="button" data-work-filter="all" aria-pressed="true">All <span class="filter-count">{projects.length}</span></button>
+      <button type="button" data-work-filter="games" aria-pressed="false">Games <span class="filter-count">{games.length}</span></button>
+      <button type="button" data-work-filter="mods" aria-pressed="false">Mods <span class="filter-count">{mods.length}</span></button>
     </div>
     <noscript><nav class="work-filters" aria-label="Games and mods"><a href="/#games-mods" aria-current="page">All</a><a href="/games/">Games</a><a href="/mods/">Mods</a></nav></noscript>
   </> : <nav class="work-filters" aria-label="Games and mods"><a href="/#games-mods">All</a><a href="/games/" aria-current={category === 'games' ? 'page' : undefined}>Games</a><a href="/mods/" aria-current={category === 'mods' ? 'page' : undefined}>Mods</a></nav>}
@@ -27,7 +27,7 @@ const Heading = standalone ? 'h1' : 'h2';
     if (!art || art.width !== art.height) throw new Error(`${project.id} needs a square catalogue icon`);
     return <a class="work-game" href={`/projects/${project.id}/`} data-work-item="games">
       <div class="work-game-art"><SquarePreview src={art} alt={`${project.data.title} icon`} sizes="(max-width: 640px) 88vw, (max-width: 900px) 42vw, 28vw" /></div>
-      <div class="work-card-title"><h3>{project.data.title}</h3><Arrow /></div><p>Android game</p>
+      <div class="work-card-title"><h3>{project.data.title}</h3><Arrow /></div><p class="work-platform">Android game · {project.data.technologies.join(' · ')}</p><p class="work-summary">{project.data.summary}</p>
     </a>;
   })}</div>}
   {mods.length > 0 && <div class="work-mods" data-work-group="mods">{mods.map(project => {

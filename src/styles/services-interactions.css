@@ -3,9 +3,10 @@
 :root {
   --primary: #3c82f6;
   --action: var(--primary);
-  --on-action: #fff;
+  --on-action: #111;
   --companion: #3068c5;
   --underlay: var(--companion);
+  --link-ink: var(--companion);
   --paper: #fff;
   --surface: #fff;
   --ink: #202020;
@@ -27,11 +28,12 @@
   --blue: var(--primary);
   --coral: var(--primary);
   --header: var(--paper);
+  --link-ink: #80b0ff;
 }
 ::selection { background: var(--companion); color: #fff; }
 h1, h2, .page-heading h1, .project-heading h1 { color: var(--primary); font-weight: 500; }
 .service-accent-line { background: var(--companion); }
-.step-number { color: var(--companion); }
+.step-number { color: var(--link-ink); }
 :is(a, button, input, select, textarea):focus-visible { outline: 3px solid var(--primary); outline-offset: 6px; }
 
 .service-button,
@@ -73,7 +75,7 @@ h1, h2, .page-heading h1, .project-heading h1 { color: var(--primary); font-weig
 .main-nav .nav-contact { gap: 13px; padding: 11px 22px; }
 .main-nav .nav-contact::after { display: none; }
 .main-nav a:not(.nav-contact) { color: var(--ink); transition: color .2s ease; }
-.main-nav a:not(.nav-contact):is(:hover, :focus-visible) { color: var(--primary); }
+.main-nav a:not(.nav-contact):is(:hover, :focus-visible) { color: var(--link-ink); }
 .main-nav a:not(.nav-contact)::after { display: none; transform: none; transition: none; }
 .main-nav a[aria-current]:not(.nav-contact)::after {
   display: block; height: 3px; bottom: 5px; border-radius: 3px; background: var(--primary);
@@ -89,7 +91,7 @@ h1, h2, .page-heading h1, .project-heading h1 { color: var(--primary); font-weig
 }
 :is(.service-text-link, .text-link, .inline-link, .prose a:not(.button-link),
   .hero-media figcaption a, .site-footer a, .back-link, .project-facts a):is(:hover, :focus-visible) {
-  color: var(--primary); text-decoration-color: var(--primary);
+  color: var(--link-ink); text-decoration-color: var(--link-ink);
 }
 :is(.service-text-link, .text-link) svg { transition: transform .2s ease; }
 .text-link { display: inline-flex; align-items: center; gap: 8px; }
@@ -97,21 +99,22 @@ h1, h2, .page-heading h1, .project-heading h1 { color: var(--primary); font-weig
 .gallery-item>a>svg { position: absolute; bottom: 12px; right: 12px; width: 32px; height: 32px; padding: 6px; border-radius: 50%; background: var(--paper); color: var(--ink); }
 :is(.service-text-link, .text-link):is(:hover, :focus-visible) svg { transform: translate(2px, -2px); }
 .work-filters :is(a, button) { transition: color .2s ease; }
-.work-filters :is(a, button):is(:hover, :focus-visible) { color: var(--primary); }
+.work-filters :is(a, button):is(:hover, :focus-visible) { color: var(--link-ink); }
 .work-filters button[aria-pressed=true]::after, .work-filters a[aria-current]::after { height: 3px; border-radius: 3px; }
 .work-game-art img, .journal-image img, .gallery-item img { transition: transform .25s ease; }
 .work-game:is(:hover, :focus-visible) .work-game-art img,
 .journal-card>a:is(:hover, :focus-visible) .journal-image img,
 .gallery-item>a:is(:hover, :focus-visible) img { transform: scale(1.015); }
-.work-game:is(:hover, :focus-visible) :is(h3, .work-card-title>svg) { color: var(--primary); }
+.work-game:is(:hover, :focus-visible) :is(h3, .work-card-title>svg) { color: var(--link-ink); }
 .work-mod, .project-row, .journal-line, .search-result>a { transition: padding .2s ease, background .2s ease; }
 :is(.work-mod, .project-row, .journal-line, .search-result>a):is(:hover, :focus-visible) {
   padding-left: 14px; background: var(--accent);
 }
-:is(.work-mod, .project-row, .journal-line, .search-result>a):is(:hover, :focus-visible) :is(h2, h3, .row-name, svg) { color: var(--primary); }
+:is(.work-mod, .project-row, .journal-line, .search-result>a):is(:hover, :focus-visible) :is(h2, h3, .row-name, svg) { color: var(--link-ink); }
+.journal-card h2, .search-result h2 { color: var(--link-ink); }
 
 .theme-toggle, :root[data-theme=dark] .theme-toggle {
-  width: 42px; height: 42px; flex: none; padding: 0; border: 1px solid var(--line);
+  width: 44px; height: 44px; flex: none; padding: 0; border: 1px solid var(--line);
   border-radius: 50%; background: var(--paper); color: var(--ink); box-shadow: none;
   transform: none; transition: color .2s ease, border-color .2s ease;
 }
@@ -120,10 +123,10 @@ h1, h2, .page-heading h1, .project-heading h1 { color: var(--primary); font-weig
 }
 .theme-toggle svg { width: 18px; height: 18px; }
 .menu-toggle { border-radius: 999px; transition: color .2s ease, border-color .2s ease; }
-.menu-toggle:is(:hover, :focus-visible) { color: var(--primary); border-color: var(--primary); }
+.menu-toggle:is(:hover, :focus-visible) { color: var(--link-ink); border-color: var(--link-ink); }
 .brief-field :is(input, select, textarea), .search-input-wrap input { transition: border-color .2s ease; }
 .brief-field :is(input, select, textarea):focus-visible, .search-input-wrap input:focus-visible { border-color: var(--primary); }
-@media (max-width: 620px) { .theme-toggle, :root[data-theme=dark] .theme-toggle { width: 36px; height: 36px; } }
+@media (max-width: 370px) { .site-header { column-gap: 8px; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   :is(.service-button, .button-link, .main-nav .nav-contact):is(:hover, :focus-visible, :active),

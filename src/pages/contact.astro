@@ -14,7 +14,11 @@ import SiteLayout from '../layouts/SiteLayout.astro';
           <div class="brief-field"><label for="project-platforms">Platforms or technology <span>(if known)</span></label><input id="project-platforms" name="platforms" type="text" maxlength="200" placeholder="For example: Android, Unity, Minecraft" /></div>
           <div class="brief-pair"><div class="brief-field"><label for="project-timing">Timing <span>(optional)</span></label><input id="project-timing" name="timing" type="text" maxlength="120" placeholder="A target date, or flexible" /></div><div class="brief-field"><label for="project-budget">Budget range <span>(optional)</span></label><input id="project-budget" name="budget" type="text" maxlength="120" placeholder="A range, or to be discussed" /></div></div>
           <button class="service-button" type="submit">Prepare email draft</button>
-          <div class="draft-result" hidden><p data-brief-status role="status" aria-live="polite"></p><a class="service-text-link" data-brief-email href="mailto:stormeckhart@simplyshapedgames.fr">Open email draft</a></div>
+          <div class="draft-result" hidden>
+            <p data-brief-status role="status" aria-live="polite"></p>
+            <div class="draft-actions"><a class="service-text-link" data-brief-email href="mailto:stormeckhart@simplyshapedgames.fr">Open email draft</a><button class="draft-copy" type="button" data-brief-copy>Copy full draft</button></div>
+            <div class="brief-field"><label for="project-draft">Your complete draft</label><p id="draft-copy-help">No email app, or a long brief? Copy this text into your usual email service. You can also select and copy it manually.</p><textarea id="project-draft" data-brief-text readonly rows="10" aria-describedby="draft-copy-help"></textarea></div>
+          </div>
         </form>
         <noscript><p>The brief builder needs JavaScript. You can email the details directly using the address on this page.</p></noscript>
       </div>
@@ -25,16 +29,36 @@ import SiteLayout from '../layouts/SiteLayout.astro';
   const form = document.querySelector<HTMLFormElement>('[data-project-brief]');
   if (form) {
     form.hidden = false;
+    const result = form.querySelector<HTMLElement>('.draft-result')!;
+    const status = form.querySelector<HTMLElement>('[data-brief-status]')!;
+    const draftText = form.querySelector<HTMLTextAreaElement>('[data-brief-text]')!;
+    const copy = form.querySelector<HTMLButtonElement>('[data-brief-copy]')!;
+    copy.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(draftText.value);
+        status.textContent = 'Draft copied. Paste it into your email service and send it there. No message has been sent.';
+      } catch {
+        draftText.focus();
+        draftText.select();
+        status.textContent = 'Automatic copying is unavailable. Your draft is selected; copy it manually and paste it into your email service. No message has been sent.';
+      }
+    });
+    form.addEventListener('input', () => {
+      result.hidden = true;
+      status.textContent = '';
+    });
     form.addEventListener('submit', event => {
       event.preventDefault();
       if (!form.reportValidity()) return;
       const value = (id: string) => (form.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('#' + id)?.value || '').trim();
       const name = value('project-name');
       const body = ['Hello Storm,', '', 'I would like to discuss a project.', '', 'Project: ' + (name || 'To be defined'), 'Type: ' + value('project-type'), '', value('project-scope'), '', 'Platforms / technology: ' + (value('project-platforms') || 'To be discussed'), 'Timing: ' + (value('project-timing') || 'Flexible / to be discussed'), 'Budget: ' + (value('project-budget') || 'To be discussed')].join('\n');
+      const subject = name ? 'Project enquiry: ' + name : 'Game or mod project enquiry';
       const mail = form.querySelector<HTMLAnchorElement>('[data-brief-email]')!;
-      mail.href = 'mailto:stormeckhart@simplyshapedgames.fr?subject=' + encodeURIComponent(name ? 'Project enquiry: ' + name : 'Game or mod project enquiry') + '&body=' + encodeURIComponent(body);
-      form.querySelector<HTMLElement>('[data-brief-status]')!.textContent = 'Your draft is ready. Open it in your email app, review it and send it there. No message has been sent.';
-      form.querySelector<HTMLElement>('.draft-result')!.hidden = false;
+      mail.href = 'mailto:stormeckhart@simplyshapedgames.fr?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      draftText.value = 'To: stormeckhart@simplyshapedgames.fr\nSubject: ' + subject + '\n\n' + body;
+      status.textContent = 'Your draft is ready. Open it in your email app, or copy the complete text below. Review and send it there. No message has been sent.';
+      result.hidden = false;
     });
   }
 </script>

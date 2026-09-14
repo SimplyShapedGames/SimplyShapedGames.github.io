@@ -9,6 +9,27 @@ test('Games owns the requested blue pair in both themes', () => {
   assert.match(css, /--underlay: var\(--companion\)/);
   assert.doesNotMatch(css, /#ff615b|#ff7772|#cc4e4a/i);
 });
+
+test('small action text and link states retain AA contrast without changing the brand blue', () => {
+  const luminance = hex => hex.replace('#', '').match(/../g).map(channel => parseInt(channel, 16) / 255).map(channel => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4).reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
+  const contrast = (a, b) => (Math.max(luminance(a), luminance(b)) + 0.05) / (Math.min(luminance(a), luminance(b)) + 0.05);
+  assert.match(css, /--on-action: #111;/);
+  assert.match(css, /--link-ink: var\(--companion\);/);
+  assert.match(css, /--link-ink: #80b0ff;/);
+  for (const [foreground, background] of [['#111111', '#3c82f6'], ['#3068c5', '#ffffff'], ['#80b0ff', '#202020'], ['#80b0ff', '#292929']]) assert(contrast(foreground, background) >= 4.5, `${foreground} on ${background}`);
+  assert.match(css, /width: 44px; height: 44px/);
+});
+
+test('service evidence and catalogue descriptions come from real released projects', async () => {
+  const home = await source('src/pages/index.astro');
+  const catalogue = await source('src/components/Catalogue.astro');
+  assert.match(home, /Personal projects you can explore and play/);
+  assert.match(home, /href: '\/projects\/copycat-expansion\/'/);
+  assert.match(home, /href: '\/games\/'/);
+  assert.match(home, /projects.filter\(project => project.data.category === 'games'\).length/);
+  assert(catalogue.includes('{project.data.summary}'));
+  assert(catalogue.includes('class="filter-count"'));
+});
 test('shared control contract preserves SSS pill, lift, press and stable fill', () => {
   for (const rule of ['border-radius: 999px', '0 3px 0 var(--underlay)', 'translateY(-4px)', '0 7px 0 var(--underlay)', 'translateY(1px)', '0 2px 0 var(--underlay)', 'transform .2s ease, box-shadow .2s ease', ':is(:hover, :focus-visible)', 'translate(2px, -2px)']) assert(css.includes(rule), rule);
 });

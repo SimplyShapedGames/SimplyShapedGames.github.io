@@ -12,6 +12,10 @@ const { data, id } = project;
 const { Content } = await render(project);
 const art = data.cover ? artwork[data.cover] : undefined;
 if (art && (art.width <= art.height || art.width < 1000)) throw new Error(`Project '${id}' needs landscape cover artwork at least 1000 pixels wide, not a square icon or small preview`);
+// Sharing uses the same genuine cover, resized proportionally without a crop.
+// JPEG is broadly supported by social crawlers; page images remain responsive WebP.
+const socialImage = art ? await getImage({ src: art, width: Math.min(art.width, 1200), format: 'jpg', quality: 85 }) : undefined;
+const coverAlt = data.imageNote ? `${data.title} — ${data.imageNote}` : `${data.title} artwork`;
 const related = (await allProjects()).filter(p => data.related.includes(p.id));
 const posts = (await allPosts()).filter(p => p.data.related_projects.includes(id));
 const gallery = await Promise.all(data.gallery.map(async item => {
@@ -20,7 +24,7 @@ const gallery = await Promise.all(data.gallery.map(async item => {
   return { ...item, image, large: await getImage({ src: image, width: Math.min(image.width, 2000), format: 'webp' }) };
 }));
 ---
-<SiteLayout title={data.title} description={data.summary}>
+<SiteLayout title={data.title} description={data.summary} image={socialImage?.src} imageAlt={coverAlt} imageWidth={socialImage?.attributes.width} imageHeight={socialImage?.attributes.height}>
   <article class="project-page page-shell">
     <a class="back-link" href={`/${data.category}/`}>← All {data.category}</a>
     <header class="project-heading">

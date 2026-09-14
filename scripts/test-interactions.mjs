@@ -220,15 +220,17 @@ test('work filters show all five projects or the exact games/mods subset with ac
   assert(source.includes('<noscript>') && source.includes('href="/games/"') && source.includes('href="/mods/"'), 'No-JavaScript category navigation must remain available');
 });
 
-async function briefContext(values = {}, valid = true) {
+async function briefContext(values = {}, valid = true, clipboard) {
   const source = await readFile('src/pages/contact.astro', 'utf8');
   const script = transpileClient(source.match(/<script>([\s\S]*?)<\/script>/)[1]);
   const form = element(), mail = { href: 'mailto:stormeckhart@simplyshapedgames.fr' }, status = element(), result = element();
+  const copy = element(), text = { ...element(), focus() { this.focused = true; }, select() { this.selected = true; } };
   const inputs = Object.fromEntries(['project-name', 'project-type', 'project-scope', 'project-platforms', 'project-timing', 'project-budget'].map(id => [id, { value: values[id] || '' }]));
   form.reportValidity = () => valid;
-  form.querySelector = selector => selector === '[data-brief-email]' ? mail : selector === '[data-brief-status]' ? status : selector === '.draft-result' ? result : inputs[selector.slice(1)];
-  runInNewContext(script, { document: { querySelector: () => form }, encodeURIComponent });
-  return { form, mail, status, result, inputs };
+  const controls = { '[data-brief-email]': mail, '[data-brief-status]': status, '.draft-result': result, '[data-brief-copy]': copy, '[data-brief-text]': text };
+  form.querySelector = selector => controls[selector] || inputs[selector.slice(1)];
+  runInNewContext(script, { document: { querySelector: () => form }, navigator: { clipboard }, encodeURIComponent });
+  return { form, mail, status, result, inputs, copy, text };
 }
 
 test('project brief prepares an encoded email draft without sending or navigating', async () => {
@@ -258,6 +260,35 @@ test('brief validation blocks empty scope and optional fields have honest defaul
   assert.equal(draft.searchParams.get('subject'), 'Game or mod project enquiry');
   assert(draft.searchParams.get('body').includes('To be discussed'));
   assert(!draft.searchParams.get('body').includes('500'));
+});
+
+test('a full long brief remains copyable without an email app or URL truncation', async () => {
+  let copied;
+  const scope = 'Un prototype — avec sauvegardes. '.repeat(100);
+  const brief = await briefContext({ 'project-type': 'Game development', 'project-scope': scope }, true, { async writeText(text) { copied = text; } });
+  brief.form.events.submit({ preventDefault() {} });
+  assert(brief.text.value.includes(scope.trim()));
+  assert(brief.text.value.startsWith('To: stormeckhart@simplyshapedgames.fr\nSubject: Game or mod project enquiry'));
+  await brief.copy.events.click();
+  assert.equal(copied, brief.text.value);
+  assert.match(brief.status.textContent, /Draft copied/);
+  assert.match(brief.status.textContent, /No message has been sent/);
+});
+
+test('brief copy denial falls back to selectable text and editing invalidates stale drafts', async () => {
+  for (const clipboard of [undefined, { async writeText() { throw new Error('Permission denied'); } }]) {
+    const brief = await briefContext({ 'project-scope': 'First brief' }, true, clipboard);
+    brief.form.events.submit({ preventDefault() {} });
+    await brief.copy.events.click();
+    assert(brief.text.focused && brief.text.selected);
+    assert.match(brief.status.textContent, /copy it manually/);
+    brief.inputs['project-scope'].value = 'Changed brief';
+    brief.form.events.input();
+    assert.equal(brief.result.hidden, true);
+    assert.equal(brief.status.textContent, '');
+    brief.form.events.submit({ preventDefault() {} });
+    assert(brief.text.value.includes('Changed brief') && !brief.text.value.includes('First brief'));
+  }
 });
 
 test('mobile navigation opens and closes through links, Escape and desktop resize', () => {

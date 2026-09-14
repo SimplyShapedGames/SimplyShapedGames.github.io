@@ -106,6 +106,16 @@ for (const source of projectSources) {
   const heroHeight = Number(hero.match(/\bheight="(\d+)"/)?.[1]);
   assert(heroWidth > heroHeight && heroHeight > 0, `${id} is using a square or portrait image in its banner slot`);
   assert(heroWidth >= 1000, `${id} is using a low-resolution preview in its banner slot`);
+  const socialSrc = projectHtml.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
+  const socialWidth = Number(projectHtml.match(/<meta property="og:image:width" content="(\d+)"/)?.[1]);
+  const socialHeight = Number(projectHtml.match(/<meta property="og:image:height" content="(\d+)"/)?.[1]);
+  assert(socialSrc && new URL(socialSrc).origin === origin && socialSrc.endsWith('.jpg'), `${id} needs optimized local share artwork`);
+  assert(socialWidth > socialHeight && socialWidth <= 1200, `${id} share artwork must remain landscape without upscaling`);
+  assert(Math.abs(socialWidth / socialHeight - heroWidth / heroHeight) < 0.01, `${id} share artwork must preserve the cover proportions`);
+  assert(projectHtml.includes('property="og:image:alt"') && projectHtml.includes('name="twitter:image:alt"'), `${id} share artwork needs an accessible description`);
+  assert(projectHtml.includes('name="twitter:card" content="summary_large_image"'), `${id} needs a landscape sharing card`);
+  const socialFile = resolve(root, '.' + new URL(socialSrc).pathname);
+  assert((await stat(socialFile)).size < 1024 * 1024, `${id} optimized share image should stay below 1 MiB`);
   const expectedGallery = (content.match(/^  - image: /gm) || []).length;
   const renderedGallery = (projectHtml.match(/class="gallery-item(?:\s|\")/g) || []).length;
   assert.equal(renderedGallery, expectedGallery, `${id} gallery does not match its source`);
