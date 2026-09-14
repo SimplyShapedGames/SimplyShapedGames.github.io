@@ -6,7 +6,20 @@ import ts from 'typescript';
 import sharp from 'sharp';
 import { createHash } from 'node:crypto';
 import './test-favicons.mjs';
-import { publicGameProjects, publicGamePosts, verifyRedirects, verifyPreservedGameSources } from './site-contract.mjs';
+import { publicGameProjects, publicGamePosts, verifyRedirects, verifyPreservedGameSources, preservedGameSourceDigest } from './site-contract.mjs';
+
+test('advertising preservation accepts only Git line-ending differences', async () => {
+  const original = await readFile('app-ads.txt');
+  const lf = original.toString('utf8').replaceAll('\r\n', '\n');
+  const crlf = lf.replaceAll('\n', '\r\n');
+  const expected = '0e65c99614784d5717af1c0cb278c69d533b0e912348abd8e0b3b669733255de';
+  for (const text of [lf, crlf]) assert.equal(preservedGameSourceDigest('app-ads.txt', Buffer.from(text)), expected);
+  for (const changed of [lf + ' ', lf.replace('google.com', 'example.com'), lf.replace('\n', ''), lf.replace('\n', '\r')]) {
+    assert.notEqual(preservedGameSourceDigest('app-ads.txt', Buffer.from(changed)), expected, 'Substantive changes and lone CRs must fail');
+  }
+  const policy = await readFile('privacypolicy.md');
+  assert.notEqual(preservedGameSourceDigest('privacypolicy.md', Buffer.from(policy.toString().replaceAll('\n', '\r\n'))), preservedGameSourceDigest('privacypolicy.md', policy), 'Do not normalize the policy or other files');
+});
 
 // Exercise the actual inline/client scripts with small, deterministic interface
 // doubles. These tests do not launch a browser or make visual claims.

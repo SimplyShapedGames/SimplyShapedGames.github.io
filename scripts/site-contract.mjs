@@ -47,9 +47,16 @@ export async function verifyRedirects(file = 'public/_redirects') {
   return actual;
 }
 
+export function preservedGameSourceDigest(path, bytes) {
+  // Git checks this text file out as CRLF on Windows and LF on Linux. Only
+  // normalize those paired line endings; preserve all content and whitespace.
+  const canonical = path === 'app-ads.txt' ? bytes.toString('utf8').replaceAll('\r\n', '\n') : bytes;
+  return createHash('sha256').update(canonical).digest('hex');
+}
+
 export async function verifyPreservedGameSources() {
   for (const [path, hash] of [
-    ['app-ads.txt', '4d4c70ca753db3b3dd48c0ceadc258cf901e591163241d33d401f79cf24ce85b'],
+    ['app-ads.txt', '0e65c99614784d5717af1c0cb278c69d533b0e912348abd8e0b3b669733255de'],
     ['privacypolicy.md', '44fe362eeee849b99113e3312507b20570010cfa810a030b66a54adf9e2728f0'],
-  ]) assert.equal(createHash('sha256').update(await readFile(path)).digest('hex'), hash, `${path}: original game service file must remain byte-for-byte unchanged`);
+  ]) assert.equal(preservedGameSourceDigest(path, await readFile(path)), hash, `${path}: original game service contents must remain unchanged (app-ads.txt permits Git LF/CRLF only)`);
 }
