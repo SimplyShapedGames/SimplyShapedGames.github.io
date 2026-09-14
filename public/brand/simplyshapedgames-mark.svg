@@ -9,5 +9,5 @@
       <path d="M40 43C41 43 41.7 43.7 42.2 44.7L49.5 58.5Q50 59.5 50 60.5Q50 63 47.5 63H32.5Q30 63 30 60.5Q30 59.5 30.5 58.5L37.8 44.7C38.3 43.7 39 43 40 43Z" fill="#000000"/>
     </mask>
   </defs>
-  <rect x="4" y="4" width="72" height="72" rx="19" fill="#ff615b" mask="url(#shape-cutouts)"/>
+  <rect x="4" y="4" width="72" height="72" rx="19" fill="#3C82F6" mask="url(#shape-cutouts)"/>
 </svg>

@@ -5,6 +5,7 @@ import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
 import sharp from 'sharp';
 import { createHash } from 'node:crypto';
+import './test-favicons.mjs';
 import { publicGameProjects, publicGamePosts, verifyRedirects, verifyPreservedGameSources } from './site-contract.mjs';
 
 // Exercise the actual inline/client scripts with small, deterministic interface
@@ -41,19 +42,13 @@ test('Games uses the exact family prefix and badge with a clean matching suffix 
   assert(brandCss.includes('width:54px;height:54px') && brandCss.includes('font-size:2.19rem'));
   for(const [viewport,size,font]of[[1150,46,1.86],[850,42,1.7],[620,32,1.3],[370,26,1.06]])assert(brandCss.includes(`@media(max-width:${viewport}px){.brand-lockup .brand-mark{width:${size}px;height:${size}px}.brand-lockup .brand-wordmark{font-size:${font}rem}}`));
 });
-test('Games active icons and standalone logo consistently use the coral family badge', async () => {
+test('Games brand masks and standalone logo preserve the approved family geometry', async () => {
   const mark=await readFile('public/brand/brand-lockup-mark.svg');
   assert(mark.equals(await readFile('public/brand/simplyshapedgames-mark.svg')));
-  assert(mark.equals(await readFile('public/favicon.svg')));
-  assert(layout.includes('type="image/svg+xml" sizes="any" href="/favicon.svg"'));
-  for(const [file,size]of[['favicon-96x96.png',96],['apple-touch-icon.png',180],['web-app-manifest-192x192.png',192],['web-app-manifest-512x512.png',512]]) {
-    const actual=await sharp(`public/${file}`).raw().toBuffer();
-    const expected=await sharp(mark).resize(size,size).flatten({background:'#fff'}).raw().toBuffer();
-    assert(actual.equals(expected),`${file} must use the same coral badge`);
-  }
+  assert(mark.toString().includes('fill="#3C82F6" mask="url(#shape-cutouts)"'));
   const combined=await sharp('public/brand/simplyshapedgames-wordmark.png').extractChannel(3).raw().toBuffer();
   const full=await sharp('public/brand/simplyshapedgames-logo.png').extract({left:450,top:72,width:1823,height:263}).extractChannel(3).raw().toBuffer();
-  assert(combined.equals(full),'Standalone logo must preserve wordmark alpha while applying coral');
+  assert(combined.equals(full),'Standalone logo must preserve the approved wordmark alpha');
 });
 function element() {
   return { hidden: true, content:'', textContent:'', value:'', dataset:{}, attributes:{}, events:{},
@@ -76,7 +71,7 @@ function themeContext({ saved, dark = false, unavailable = false } = {}) {
 test('theme starts from the system preference, revealing an accessible switch', () => {
   const t = themeContext({ dark:true });
   assert.equal(t.html.dataset.theme,'dark'); assert.equal(t.button.hidden,false);
-  assert.equal(t.button.attributes['aria-label'],'Switch to light mode'); assert.equal(t.meta.content,'#121212');
+  assert.equal(t.button.attributes['aria-label'],'Switch to light mode'); assert.equal(t.meta.content,'#202020');
 });
 test('theme toggles both ways and persists across page loads', () => {
   const t = themeContext(); t.button.events.click();

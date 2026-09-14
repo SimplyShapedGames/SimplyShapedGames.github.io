@@ -1,4 +1,5 @@
 ---
+import Arrow from './Arrow.astro';
 import SquarePreview from './SquarePreview.astro';
 import type { CollectionEntry } from 'astro:content';
 import { projectArtwork } from '../lib/art';
@@ -13,5 +14,5 @@ const marks = { games: '◒', mods: '◧', websites: '⌘', design: '◐' };
   </span>
   <span class="row-name">{data.title}<small><span class:list={['status-dot', { 'is-development': data.status === 'In development' }]}></span>{data.status}{data.platforms.length ? ` · ${data.platforms.join(' / ')}` : ''}</small></span>
   <span class:list={['geometric-ribbon', { 'ribbon-web': data.category === 'websites', 'ribbon-dev': data.status === 'In development' }]} aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-  <span class="row-arrow" aria-hidden="true">↗</span>
+  <Arrow class="row-arrow" />
 </a>

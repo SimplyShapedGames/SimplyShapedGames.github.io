@@ -59,8 +59,8 @@ const actualProjectIds = (await readdir(resolve(root, 'projects'), { withFileTyp
 assert.deepEqual(actualProjectIds, [...gameProjectIds].sort(), 'Only the five approved game/mod detail routes belong on this domain');
 const indexNowKey = '895587a45b4a41d2a0b4f8e2c126ffcc';
 assert.equal((await readFile(resolve(root, `${indexNowKey}.txt`), 'utf8')).trim(), indexNowKey, 'IndexNow ownership key is missing or invalid');
-for (const favicon of ['/favicon-96x96.png', '/favicon.ico', '/apple-touch-icon.png', '/site.webmanifest']) {
-  assert(home.includes(`href="${favicon}"`), `Home page is missing ${favicon}`);
+for (const favicon of ['/favicon.svg', '/favicon-96x96.png', '/favicon.ico', '/apple-touch-icon.png', '/site.webmanifest']) {
+  assert(home.includes(`href="${favicon}?v=20260914"`), `Home page is missing the current ${favicon} revision`);
 }
 assert(home.includes('"@type":"Organization"'), 'Home page is missing Organization structured data');
 assert(home.includes('"name":"SimplyShapedGames"'), 'Organization structured data is missing the company name');
@@ -79,7 +79,7 @@ for (const [name, dimensions] of brandIconDimensions) {
 assert((await stat(resolve(root, 'favicon.ico'))).size > 0, 'favicon.ico is empty');
 const manifest = JSON.parse(await readFile(resolve(root, 'site.webmanifest'), 'utf8'));
 assert.equal(manifest.name, 'SimplyShapedGames', 'Web app manifest has the wrong company name');
-assert.deepEqual(manifest.icons.map(icon => icon.src), ['/web-app-manifest-192x192.png', '/web-app-manifest-512x512.png'], 'Web app manifest icons changed');
+assert.deepEqual(manifest.icons.map(icon => icon.src), ['/web-app-manifest-192x192.png?v=20260914', '/web-app-manifest-512x512.png?v=20260914'], 'Web app manifest icons must use the current revision');
 let projectCount = 0;
 let galleryCount = 0;
 for (const source of projectSources) {
