@@ -2,6 +2,12 @@
 
 The redesigned site is an Astro static game-development services website for Cloudflare Pages. It uses the original Games logo and artwork, self-hosted Fredoka/Nunito fonts, light/dark themes and Markdown content. No backend, database, paid hosting or external font request is needed. The current Games-only catalogue and migration boundaries are specified in [GAMES-SITE-SPLIT.md](GAMES-SITE-SPLIT.md); wider portfolio-editing notes below are historical context, not permission to add non-game content back to this activity site.
 
+## Theme surfaces
+
+The decorative blue remains `#3c82f6`, with `#3068c5` as its companion. Day-mode filled controls keep dark labels on primary blue. Night-mode filled controls use white labels on companion blue (5.37:1 contrast), with a `#244e94` underlay. Keep these semantic action colours through hover, keyboard focus and press states; neutral secondary controls retain their neutral pairing.
+
+The large original homepage logo uses a black canvas with white lettering in day mode and a white canvas with black lettering at night. Inversion is scoped only to the original monochrome logo image, never the featured PiecePerfect artwork. Its caption follows the poster's own colours. These rules are protected by `scripts/test-services-visual-system.mjs`.
+
 ## Work locally
 
 Use Node.js 24 and pnpm 11.19.0 (pinned in package.json).

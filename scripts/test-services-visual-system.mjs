@@ -15,7 +15,12 @@ test('home displays the original Games identity and the exact approved PiecePerf
   assert.equal(createHash('sha256').update(original).digest('hex'), '438ff3537a5e4875cc84330bfafbe7f970826efa81c9450c5a0de2fdbd45c5d9');
   assert(hero.includes('src={originalLogo}'));
   assert(hero.includes('aspect-ratio: 1;'));
-  assert(hero.includes('background: #fff;'), 'The opaque original must retain its clean white canvas in either theme');
+  assert(hero.includes('background: var(--poster-paper);'));
+  assert(hero.includes('--poster-paper: #000;') && hero.includes('--poster-ink: #fff;'), 'Day mode uses a black poster with white lettering');
+  assert.match(hero, /:global\(:root\[data-theme=dark\]\) \.games-brand-poster\s*\{\s*--poster-paper: #fff;\s*--poster-ink: #000;\s*--poster-logo-filter: none;/, 'Night mode keeps the original black lettering on white');
+  assert(hero.includes('--poster-logo-filter: invert(1);'));
+  assert.match(hero, /\.original-games-logo\s*\{\s*filter: var\(--poster-logo-filter\);/, 'Invert only the monochrome logo, never the featured game image');
+  assert(hero.includes('color: var(--poster-ink);'), 'The poster caption follows its own canvas, not the page theme');
   assert(hero.includes("import piecePerfectBanner from '../../assets/img/Sprite_GameFeature2.png'"));
   const banner = await readFile(new URL('../assets/img/Sprite_GameFeature2.png', import.meta.url));
   assert.equal(createHash('sha256').update(banner).digest('hex'), '5451941bf5515f0ca08ca47508e972918358967078726b19aea87659510b8242', 'Reuse the exact approved banner, not the old artwork or the cropped store feature graphic');
@@ -65,9 +70,11 @@ test('small action text and link states retain AA contrast without changing the 
   const luminance = hex => hex.replace('#', '').match(/../g).map(channel => parseInt(channel, 16) / 255).map(channel => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4).reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
   const contrast = (a, b) => (Math.max(luminance(a), luminance(b)) + 0.05) / (Math.min(luminance(a), luminance(b)) + 0.05);
   assert.match(css, /--on-action: #111;/);
+  assert.match(css, /:root\[data-theme=dark\]\s*\{[\s\S]*?--action: var\(--companion\);\s*--on-action: #fff;\s*--underlay: #244e94;/, 'All night filled actions use white on the accessible secondary blue');
   assert.match(css, /--link-ink: var\(--companion\);/);
   assert.match(css, /--link-ink: #80b0ff;/);
-  for (const [foreground, background] of [['#111111', '#3c82f6'], ['#3068c5', '#ffffff'], ['#80b0ff', '#202020'], ['#80b0ff', '#292929']]) assert(contrast(foreground, background) >= 4.5, `${foreground} on ${background}`);
+  for (const [foreground, background] of [['#111111', '#3c82f6'], ['#ffffff', '#3068c5'], ['#3068c5', '#ffffff'], ['#80b0ff', '#202020'], ['#80b0ff', '#292929']]) assert(contrast(foreground, background) >= 4.5, `${foreground} on ${background}`);
+  assert.match(css, /:is\(\.service-button, \.button-link:not\(\.secondary\), \.main-nav \.nav-contact\):is\(:hover, :focus-visible\)\s*\{\s*background: var\(--action\);\s*color: var\(--on-action\);/, 'Hover and keyboard focus retain the theme-specific fill and white night ink');
   assert.match(css, /width: 44px; height: 44px/);
 });
 

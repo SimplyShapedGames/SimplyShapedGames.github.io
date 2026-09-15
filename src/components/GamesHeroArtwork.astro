@@ -43,22 +43,30 @@ import piecePerfectBanner from '../../assets/img/Sprite_GameFeature2.png';
     padding: 16px 10px;
   }
   .games-brand-poster {
+    --poster-paper: #000;
+    --poster-ink: #fff;
+    --poster-logo-filter: invert(1);
     position: relative;
     width: 86%;
     margin-left: auto;
     padding-top: 42px;
     border: 1px solid var(--line);
     border-radius: 26px;
-    background: #fff;
+    background: var(--poster-paper);
     box-shadow: 0 15px 45px #00000006;
     transform: rotate(3deg);
+  }
+  :global(:root[data-theme=dark]) .games-brand-poster {
+    --poster-paper: #fff;
+    --poster-ink: #000;
+    --poster-logo-filter: none;
   }
   .poster-caption {
     position: absolute;
     top: 22px;
     right: 24px;
     margin: 0;
-    color: #202020;
+    color: var(--poster-ink);
     font-size: 12px;
     font-weight: 800;
     line-height: 1.4;
@@ -67,6 +75,7 @@ import piecePerfectBanner from '../../assets/img/Sprite_GameFeature2.png';
     text-transform: uppercase;
   }
   .original-games-logo {
+    filter: var(--poster-logo-filter);
     display: block;
     width: 100%;
     height: auto;
